@@ -4,10 +4,20 @@ import lombok.Getter;
 
 @Getter
 public enum UserStatus {
-    active(0),
-    blocked(1);
+    ACTIVE(0),
+    BLOCKED(1);
+    private final int value;
     UserStatus(int value) {
         this.value = value;
     }
-    private final int value;
+
+    public static UserStatus fromValue(int value) {
+        for (UserStatus status : UserStatus.values()) {
+            if (status.value == value) {
+                return status;
+            }
+        }
+        return null;
+    }
+
 }

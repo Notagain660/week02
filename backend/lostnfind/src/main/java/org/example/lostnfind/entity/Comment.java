@@ -1,19 +1,39 @@
 package org.example.lostnfind.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.*;
 
-import java.util.Date;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
-public class Comment {
-    private long commenterId;
-    private long replyId;
+@TableName("comment")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+
+public class Comment implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @TableId(type = IdType.AUTO)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private long batchco;
+
     private int floor;
-    private long postId;
-    private String commentText;
-    private Date replyTime;
 
-    public Comment(){}
+    @TableField("commenterid")
+    private long commenterId;
+    @TableField("replyid")
+    private long replyId;
+    @TableField("postid")
+    private long postId;
+    @TableField("commenttext")
+    private String commentText;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime replyTime;
+
 }

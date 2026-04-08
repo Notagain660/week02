@@ -1,20 +1,37 @@
 package org.example.lostnfind.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.*;
 import org.example.lostnfind.enums.ChatStatus;
 
-import java.util.Date;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
-public class Chat {
+@TableName("chat")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+
+public class Chat implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @TableId(type = IdType.AUTO)
+    private long batchchat;
+
+    @TableField("senderid")
     private long senderId;
+    @TableField("receiverid")
     private long receiverId;
+    @TableField("chatcontent")
     private String chatContent;
+    @TableField("chatstatus")
     private ChatStatus chatStatus;
-    private Date sendTime;
-    private Date readTime;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime sendTime;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime readTime;
 
-    public Chat(){}
 }
