@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,13 +43,16 @@ public class User implements Serializable {
     private long userId;
 
     private Role role;
+    @Size(min = 8, max = 43)
     private String password;
 
     @TableField("username")
     private String userName;//对应数据表的哪一列
     @TableField("useremail")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     private String userEmail;
     @TableField("userphone")
+    @Pattern(regexp = "^1[3-9]\\d{9}$")
     private String userPhone;
     @TableField("userpostnum")
     private int userPostNum;

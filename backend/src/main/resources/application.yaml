@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/lostnfind?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: Gq39k1oP17
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -32,3 +32,6 @@ logging:
   level:
     root: INFO
     com.example.demo: DEBUG
+
+jwt:
+  secretkey: ${SECRETKEY}

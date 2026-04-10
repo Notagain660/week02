@@ -1,11 +1,13 @@
 package org.example.backend.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 @Getter
 public enum UserStatus {
     ACTIVE(0),
     BLOCKED(1);
+    @EnumValue
     private final int value;
     UserStatus(int value) {
         this.value = value;
