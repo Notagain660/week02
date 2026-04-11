@@ -1,5 +1,6 @@
 package org.example.backend.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 @Getter
@@ -8,6 +9,7 @@ public enum PostStatus {
     BLOCKED(1),
     DELETED(2),
     COMPLETED(3);
+    @EnumValue
     private final int value;
     PostStatus(int value) {
         this.value = value;

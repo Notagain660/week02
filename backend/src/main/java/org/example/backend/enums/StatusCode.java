@@ -16,9 +16,11 @@ public enum StatusCode {
     USEREXIST(1001, "用户已存在"),
     USERNOEXIST(1002, "用户不存在"),
     PASSWORDERROR(1003, "密码错误"),
+    USERBLOCKED(1004, "用户已封禁"),
 
     NORELATION(2000, "你与ta还不是好友"),
     NOSELFRELA(2001, "不能添加自己为好友"),
+    NOSELFCHAT(2002, "不能给自己发送消息"),
 
     NOPOST(3000, "帖子不存在"),
     POSTBLOCKED(3001, "帖子已封禁"),

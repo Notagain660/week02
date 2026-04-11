@@ -28,7 +28,7 @@ public class Relation implements Serializable {
     private OurStatus ourStatus;
     @TableField(fill = FieldFill.INSERT_UPDATE)//不用手动set时间
     private LocalDateTime requestTime;
-    @TableField(fill = FieldFill.INSERT)
+    @TableField("oktime")
     private LocalDateTime okTime;
 
 }

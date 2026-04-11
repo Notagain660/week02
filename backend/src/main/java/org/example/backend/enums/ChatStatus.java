@@ -1,12 +1,15 @@
 package org.example.backend.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 @Getter
 public enum ChatStatus {
     NOTYET(0),
     READ(1),
-    USERDELETED(2);
+    MEDELETED(2),
+    OPDELETED(3);
+    @EnumValue
     private final int value;
     ChatStatus(int value) {
         this.value = value;

@@ -11,6 +11,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 
 @RestControllerAdvice//处理controller抛出的异常，返回为json，Spring启动时会自动扫描并注册这个 Bean
 @Slf4j
@@ -41,6 +43,12 @@ public class ExceHandler {
     public MapperResult<Void> handleDuplicateKeyException(DuplicateKeyException e) {
         log.error(e.getMessage());
         return MapperResult.error(StatusCode.USEREXIST);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public MapperResult<Void> handleIOException(IOException e) {
+        log.error(e.getMessage());
+        return MapperResult.error(StatusCode.NOTFOUND);
     }
 
     @ExceptionHandler(Exception.class)//兜底用的

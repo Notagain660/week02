@@ -10,8 +10,6 @@ import org.example.backend.enums.StatusCode;
 import org.example.backend.mapper.UserMapper;
 import org.example.backend.tokener.ThreadContext;
 import org.example.backend.utilities.BusiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +28,6 @@ public class UserService {
     @Value("${jwt.secretkey}")
     private String secretkey;
     private final UserMapper userMapper;
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public boolean register(User user) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -76,11 +73,26 @@ public class UserService {
     }
 
     public User checkme() {
-        log.info(ThreadContext.getCurrentUser().getUserId());
         return userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
     }
 
+    public boolean updateName(String userName){
+        User user = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        if (user == null) {
+            throw new BusiException(StatusCode.USERNOEXIST);
+        }
+        user.setUserName(userName);
+        return userMapper.updateById(user) == 1;
+    }
 
+    public boolean updateAvatar(String avatar) {
+        User user = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        if (user == null) {
+            throw new BusiException(StatusCode.USERNOEXIST);
+        }
+        user.setUserAvatar(avatar);
+        return userMapper.updateById(user) == 1;
+    }
 
 }
 

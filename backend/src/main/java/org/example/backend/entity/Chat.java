@@ -19,7 +19,7 @@ public class Chat implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.AUTO)
-    private long batchchat;
+    private Long batchchat;
 
     @TableField("senderid")
     private long senderId;
@@ -31,7 +31,7 @@ public class Chat implements Serializable {
     private ChatStatus chatStatus;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime sendTime;
-    @TableField(fill = FieldFill.INSERT)
+    @TableField("readtime")
     private LocalDateTime readTime;
 
 }

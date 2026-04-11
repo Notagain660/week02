@@ -1,6 +1,9 @@
 spring:
   application:
     name: backend
+  web:
+    resources:
+      static-locations: file:D:/uploads/avatar/,classpath:/static/
   datasource:
     url: jdbc:mysql://localhost:3306/lostnfind?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root

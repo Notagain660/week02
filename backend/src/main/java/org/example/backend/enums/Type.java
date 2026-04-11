@@ -1,5 +1,6 @@
 package org.example.backend.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import lombok.Setter;
 public enum Type {
     LOST(0),
     FIND(1);
+    @EnumValue
     private final int value;
     Type(int value) {
         this.value = value;

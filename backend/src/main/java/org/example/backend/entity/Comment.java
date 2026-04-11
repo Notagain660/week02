@@ -21,16 +21,16 @@ public class Comment implements Serializable {
 
     @TableId(type = IdType.AUTO)
     @JsonSerialize(using = ToStringSerializer.class)
-    private long batchco;
+    private Long batchco;
 
     private int floor;
 
     @TableField("commenterid")
-    private long commenterId;
+    private Long commenterId;
     @TableField("replyid")
-    private long replyId;
+    private Long replyId;
     @TableField("postid")
-    private long postId;
+    private Long postId;
     @TableField("commenttext")
     private String commentText;
     @TableField(fill = FieldFill.INSERT)
