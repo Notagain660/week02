@@ -22,9 +22,9 @@ public class Post implements Serializable {
 
     @TableId(value = "postid", type = IdType.AUTO)
     @JsonSerialize(using = ToStringSerializer.class)
-    private long postId;
+    private Long postId;
     @TableField("posterid")
-    private long posterId;
+    private Long posterId;
 
     private Type type;
     private String contact;
@@ -40,12 +40,12 @@ public class Post implements Serializable {
     @TableField("userdes")
     private String userDescription;
     @TableField("aides")
-    private String aiDescription;
+    private String aiDescription;//前端不提供用户输入这个的界面
     @TableField("itemphoto")
     private String itemPhoto;
     @TableField("pinornot")
-    private boolean pinOrNot;
-    @TableField(fill = FieldFill.INSERT)
+    private boolean pinOrNot;//前端不提供用户输入这个的界面，反正默认为false
+    @TableField("posttime")
     private LocalDateTime postTime;
 
 }

@@ -7,16 +7,16 @@ import lombok.Getter;
 public enum Visibility {
     ALLSEE(0),
     MESEEONLY(1),
-    SOMESEE(2);
+    FRIENDSEE(2);
     @EnumValue
-    private final int value;
-    Visibility(int value) {
+    private final Integer value;
+    Visibility(Integer value) {
         this.value = value;
     }
 
-    public static Visibility fromValue(int value) {
+    public static Visibility fromValue(Integer value) {
         for (Visibility visibility : Visibility.values()) {
-            if (visibility.value == value) {
+            if (visibility.value.equals(value)) {
                 return visibility;
             }
         }

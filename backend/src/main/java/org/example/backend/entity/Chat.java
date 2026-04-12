@@ -22,9 +22,9 @@ public class Chat implements Serializable {
     private Long batchchat;
 
     @TableField("senderid")
-    private long senderId;
+    private Long senderId;
     @TableField("receiverid")
-    private long receiverId;
+    private Long receiverId;
     @TableField("chatcontent")
     private String chatContent;
     @TableField("chatstatus")

@@ -1,5 +1,6 @@
 package org.example.backend.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -7,23 +8,18 @@ import lombok.RequiredArgsConstructor;
 import org.example.backend.entity.*;
 import org.example.backend.enums.OurStatus;
 import org.example.backend.enums.StatusCode;
-import org.example.backend.service.ChatService;
-import org.example.backend.service.RelationService;
-import org.example.backend.service.SecurityService;
-import org.example.backend.service.UserService;
+import org.example.backend.service.*;
 import org.example.backend.utilities.MapperResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "成功"),
@@ -37,15 +33,24 @@ public class Controller {
 
     private final UserService userService;
     private final SecurityService securityService;
-
-    private static final Logger log = LoggerFactory.getLogger(Controller.class);
     private final RelationService relationService;
     private final ChatService chatService;
+    private final PostService postService;
+    private final ChatModel chatModel;
+    private static final Logger log = LoggerFactory.getLogger(Controller.class);
+    private final CommentService commentService;
+
 
     @GetMapping//直接输入网址就能测试是否通了
     public String trial(){
         log.info("Ciallo");
         return "Hello World";
+    }
+
+    @GetMapping("/test/ai")
+    public String testAI() {
+        return chatModel.call(new Prompt("用中文简单介绍一下人工智能"))
+                .getResult().getOutput().getText();
     }
 
     @PostMapping("/register")
@@ -66,13 +71,13 @@ public class Controller {
         return MapperResult.success(StatusCode.OK, loginReturnData);
     }
 
-    @GetMapping("/checkme")
+    @GetMapping("/user/checkme")
     public MapperResult<User> checkme(){
         User user = userService.checkme();
         return MapperResult.success(StatusCode.OK, user);
     }
 
-    @PutMapping("/change/name")
+    @PutMapping("/user/change/name")
     public MapperResult<Object> changeName(@RequestParam String name) {
         boolean result = userService.updateName(name);
         if (result) {
@@ -82,42 +87,11 @@ public class Controller {
         }
     }
 
-    @PutMapping("/change/avatar")
+    @PutMapping("/user/change/avatar")
     public MapperResult<Object> changeAvatar(@RequestPart ("image") MultipartFile image) {
         //文件上传需要发送二进制数据，不能用 JSON 字符串表示文件名
-        if (image == null || image.isEmpty()) {//空图片校验
-            return MapperResult.error(StatusCode.INVALID, "请选择图片");
-        }
-
-        String originalName = image.getOriginalFilename();//图片原始文件名（有路径）
-        String extendName;
-        if (originalName != null ) {//防止空指针错误
-            if(originalName.contains(".")) {//文件名和扩展名校验
-                extendName = originalName.substring(originalName.lastIndexOf("."));//取扩展名
-                List<String> allowedExtends = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
-                if (!allowedExtends.contains(extendName.toLowerCase())) {
-                    return MapperResult.error(StatusCode.INVALID, "不支持的图片格式");
-                }
-            } else {//默认
-                extendName = ".jpg";
-            }
-        } else {
-            return MapperResult.error(StatusCode.NOTFOUND, "获取图片资源失败");
-        }
-
-        String fileName = UUID.randomUUID() + extendName;//生成安全的文件名
-        String uploadD = "D:/uploads/avatar/";//准备目录
-        File file = new File(uploadD + fileName);
-        //保存（本地d盘已经建了目录所以没必要再判断和创建目录了）
-        try {
-            image.transferTo(file);//上传的临时文件直接写入到指定的目标文件，目录不存在爆IOException
-        } catch (IOException e) {
-            log.error("头像上传失败", e);
-            return MapperResult.error(StatusCode.DBERROR, "图片保存失败");
-        }
-
-        String avatar = "/avatar/" + fileName;//这个是可被访问的url
-        boolean result = userService.updateAvatar(avatar);
+        //这个是可被访问的url
+        boolean result = userService.updateAvatar(userService.getAvatar(image));
         if (result) {
             return MapperResult.success(StatusCode.OK, null);
         }  else {
@@ -125,7 +99,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/change/password")
+    @PutMapping("/user/change/password")
     public MapperResult<Object> changePassword(@RequestBody SecurityDTO DTO){
         boolean result = securityService.updatePassword(DTO);
         if (result) {
@@ -135,7 +109,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/change/phone")
+    @PutMapping("/user/change/phone")
     public MapperResult<Object> changePhone(@RequestBody SecurityDTO DTO){
         boolean result = securityService.updatePhone(DTO);
         if (result) {
@@ -145,7 +119,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/change/email")
+    @PutMapping("/user/change/email")
     public MapperResult<Object> changeEmail(@RequestBody SecurityDTO DTO){
         boolean result = securityService.updateEmail(DTO);
         if (result) {
@@ -161,7 +135,7 @@ public class Controller {
         return MapperResult.success(StatusCode.OK, oth);
     }
 
-    @GetMapping("/user/{ourStatus}")
+    @GetMapping("/relation/{ourStatus}")
     public MapperResult<List<Relation>> getUserProfile(@PathVariable int ourStatus){
         if(ourStatus != 1 && ourStatus != 2){
             return MapperResult.error(StatusCode.INVALID);
@@ -176,7 +150,7 @@ public class Controller {
         return MapperResult.success(StatusCode.OK, list);
     }
 
-    @PostMapping("/user/request")
+    @PostMapping("/relation/request")
     public MapperResult<Object> request(@RequestParam Long userId){
         boolean result = relationService.request(userId);
         if (result) {
@@ -186,7 +160,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/user/relation/{userId}/{ourStatus}/{act}")
+    @PostMapping("/relation/{userId}/{ourStatus}/{act}")
     public MapperResult<Object> agree(@PathVariable Long userId, @PathVariable int ourStatus, @PathVariable int act){
         boolean result = relationService.dealRelation(userId, OurStatus.fromValue(ourStatus)
                         , act);
@@ -197,7 +171,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/user/chat/{userId}")
+    @PostMapping("/chat/{userId}")
     public MapperResult<Object> sendChat(@PathVariable Long userId, @RequestParam String content){
         boolean result = chatService.sendChat(userId, content);
         if (result) {
@@ -207,13 +181,13 @@ public class Controller {
         }
     }
 
-    @GetMapping("/user/chat/check")
+    @GetMapping("/chat/check")
     public MapperResult<List<Chat>> checkChat(@RequestParam Long userId){
         List<Chat> chats = chatService.checkChats(userId);
         return MapperResult.success(StatusCode.OK, chats);
     }
 
-    @PutMapping("/user/chat/read/{chatId}")
+    @PutMapping("/chat/read/{chatId}")
     public MapperResult<Object> readChat(@PathVariable Long chatId){
         boolean result = chatService.readChat(chatId);
         if (result) {
@@ -223,7 +197,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/user/chat/delete/{chatId}")
+    @PutMapping("/chat/delete/{chatId}")
     public MapperResult<Object> deleteChat(@PathVariable Long chatId){
         boolean result = chatService.deleteChat(chatId);
         if (result) {
@@ -232,5 +206,70 @@ public class Controller {
             return MapperResult.error(StatusCode.INVALID);
         }
     }
+
+    @PostMapping("/post/image")
+    public MapperResult<String> postImage(@RequestPart (value = "image", required = false) MultipartFile image){
+        String postImage = postService.getImage(image);
+        return MapperResult.success(StatusCode.OK, postImage);
+    }
+
+    @PostMapping("/post/send")
+    public MapperResult<Post> post(@RequestBody Post post){
+        boolean result = postService.post(post);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        }  else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
+    @GetMapping("/post")
+    public MapperResult<IPage<PostDTO>> listPosts(
+            @RequestParam(defaultValue = "1") int pageCode,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Integer type,
+            @RequestParam(required = false) Integer status,//可选筛选和模糊搜索
+            @RequestParam(required = false) String itemName) {
+        IPage<PostDTO> pageResult = postService.browsePost(pageCode, size, type, status, itemName);
+        return MapperResult.success(StatusCode.OK, pageResult);
+    }
+
+    @PostMapping("/post/update")
+    public MapperResult<Post>  updatePost(@RequestBody Post post){
+        boolean result = postService.updatePost(post);
+        if (result) {//既然这样那用户删除功能也可以调用这个就是前端只能展示一个选项。
+            return MapperResult.success(StatusCode.OK, null);
+        } else {//类比QQ说说的更新功能，把没改的字段保持原样和改了的一起上传
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
+    @GetMapping("/post/{postId}")
+    public MapperResult<Post> checkPost(@PathVariable Long postId){
+        Post post = postService.checkPost(postId);
+        return MapperResult.success(StatusCode.OK, post);
+    }
+
+    @PostMapping("/comment/{postId}/{replyId}")
+    public MapperResult<Object> postReply(@PathVariable Long postId
+            , @PathVariable Long replyId, @RequestParam String text){
+        boolean result = commentService.sendComment(postId, replyId, text);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        }  else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
+    @PutMapping("/comment/{commentId}")
+    public MapperResult<Object> deleteComment(@PathVariable Long commentId){
+        boolean result = commentService.deleteComment(commentId);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
 
 }

@@ -10,15 +10,19 @@ import org.example.backend.enums.StatusCode;
 import org.example.backend.mapper.UserMapper;
 import org.example.backend.tokener.ThreadContext;
 import org.example.backend.utilities.BusiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -28,6 +32,7 @@ public class UserService {
     @Value("${jwt.secretkey}")
     private String secretkey;
     private final UserMapper userMapper;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public boolean register(User user) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -92,6 +97,46 @@ public class UserService {
         }
         user.setUserAvatar(avatar);
         return userMapper.updateById(user) == 1;
+    }
+
+    public String getAvatar(MultipartFile image) {
+        if (image == null || image.isEmpty()) {//空图片校验
+            throw new BusiException(StatusCode.INVALID, "请选择图片");
+        }
+
+        String extendName = getString(image);
+
+        String fileName = UUID.randomUUID() + extendName;//生成安全的文件名
+        String uploadD = "D:/uploads/avatar/";//准备目录
+        File file = new File(uploadD + fileName);
+        //保存（本地d盘已经建了目录所以没必要再判断和创建目录了）
+        try {
+            image.transferTo(file);//上传的临时文件直接写入到指定的目标文件，目录不存在爆IOException
+        } catch (IOException e) {
+            log.error("头像上传失败", e);
+            throw new BusiException(StatusCode.DBERROR, "图片保存失败");
+        }
+        
+        return "/avatar/" + fileName;
+    }
+
+    public String getString(MultipartFile image) {//如果多个地方要用到图片就要把这个单独包装进utilities
+        String originalName = image.getOriginalFilename();//图片原始文件名（有路径）
+        String extendName;
+        if (originalName != null ) {//防止空指针错误
+            if(originalName.contains(".")) {//文件名和扩展名校验
+                extendName = originalName.substring(originalName.lastIndexOf("."));//取扩展名
+                List<String> allowedExtends = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
+                if (!allowedExtends.contains(extendName.toLowerCase())) {
+                    throw new BusiException(StatusCode.INVALID, "不支持的图片格式");
+                }
+            } else {//默认
+                extendName = ".jpg";
+            }
+        } else {
+            throw new BusiException(StatusCode.NOTFOUND, "获取图片资源失败");
+        }
+        return extendName;
     }
 
 }

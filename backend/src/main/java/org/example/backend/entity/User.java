@@ -40,7 +40,7 @@ public class User implements Serializable {
 
     @TableId(value = "userid", type = IdType.AUTO)//Idtype使userId自增而不是雪花算法生成随机数字（mybatisplus默认）
     @JsonSerialize(using = ToStringSerializer.class) //防止前端 JS 精度丢失
-    private long userId;
+    private Long userId;
 
     private Role role;
     @Size(min = 8, max = 43)
@@ -55,7 +55,7 @@ public class User implements Serializable {
     @Pattern(regexp = "^1[3-9]\\d{9}$")
     private String userPhone;
     @TableField("userpostnum")
-    private int userPostNum;
+    private Integer userPostNum;
     @TableField("useravatar")
     private String userAvatar;
     @TableField("userstatus")

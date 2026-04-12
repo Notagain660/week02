@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.backend.mapper.PostMapper">
+
+    <select id="selectVisiblePosts" resultType="org.example.backend.entity.Post">
+        SELECT p.* FROM post p
+        WHERE p.poststatus != 2
+        AND (
+        p.visible = 0
+        OR (p.visible = 1 AND p.poster_id = #{currentUserId})<!--仅自己可见的情况-->
+        OR (p.visible = 2 AND EXISTS (
+        SELECT 1 FROM relation r<!--好友可见的情况，但是自己也可见-->
+        WHERE r.ourstatus = 2
+        AND (
+        (r.myid = p.poster_id AND r.itsid = #{currentUserId})
+        OR (r.myid = #{currentUserId} AND r.itsid = p.poster_id)
+        )
+        ))
+        )
+        <if test="type != null">
+            AND p.type = #{type}
+        </if>
+        <if test="status != null"><!--int类型-->
+            AND p.poststatus = #{status}
+        </if>
+        <if test="itemName != null and itemName != ''"><!--字符串类型-->
+            AND p.itemname LIKE CONCAT('%', #{itemName}, '%')
+        </if>
+        ORDER BY p.posttime DESC
+    </select>
+
+</mapper>

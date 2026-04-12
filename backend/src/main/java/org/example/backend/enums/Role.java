@@ -9,15 +9,15 @@ public enum Role {
     USER(0);
 
     @EnumValue
-    private final int value;
+    private final Integer value;
 
-    Role(int value) {
+    Role(Integer value) {
         this.value = value;
     }
 
-    public static Role fromValue(int value) {//前端传数字！！！
+    public static Role fromValue(Integer value) {//前端传数字！！！
         for (Role role : Role.values()) {
-            if (role.value == value) {
+            if (role.value.equals(value)) {
                 return role;
             }
         }

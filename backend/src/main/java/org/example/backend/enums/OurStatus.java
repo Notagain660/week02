@@ -9,14 +9,14 @@ public enum OurStatus {
     REQUESTING(1),
     kNITOK(2);
     @EnumValue
-    private final int value;
-    OurStatus(int value) {
+    private final Integer value;
+    OurStatus(Integer value) {
         this.value = value;
     }
 
-    public static OurStatus fromValue(int value) {
+    public static OurStatus fromValue(Integer value) {
         for (OurStatus status : OurStatus.values()) {
-            if (status.value == value) {
+            if (status.value.equals(value)) {
                 return status;
             }
         }

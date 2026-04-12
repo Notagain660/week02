@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +53,7 @@ public class ChatService {
         if(userMe.getStatus().equals(UserStatus.BLOCKED) || user.getStatus() == UserStatus.BLOCKED){
             throw new BusiException(StatusCode.USERBLOCKED, "禁止发送消息");
         }
-        if (userMe.getUserId() == user.getUserId()) {
+        if (Objects.equals(userMe.getUserId(), user.getUserId())) {
             throw new BusiException(StatusCode.NOSELFCHAT);
         }
 
@@ -68,7 +69,7 @@ public class ChatService {
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
         Chat chat = chatMapper.selectById(chatId);
 
-        if(chat.getReceiverId() != userMe.getUserId() ||
+        if(!Objects.equals(chat.getReceiverId(), userMe.getUserId()) ||
            !chat.getChatStatus().equals(ChatStatus.NOTYET)){//是不是用户能操作的消息
             throw new BusiException(StatusCode.NOTFOUND);
         }
@@ -81,7 +82,7 @@ public class ChatService {
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
         Chat chat = chatMapper.selectById(chatId);
 
-        if(chat.getReceiverId() != userMe.getUserId() && chat.getSenderId() != userMe.getUserId()){
+        if(!Objects.equals(chat.getReceiverId(), userMe.getUserId()) && !Objects.equals(chat.getSenderId(), userMe.getUserId())){
             throw new BusiException(StatusCode.NOTFOUND);
         }
 
@@ -99,7 +100,7 @@ public class ChatService {
         List<Chat> chats = chatMapper.selectList(wrapper);
         return chats.stream()
                 .filter(chat -> {
-                    if (chat.getSenderId() == userMe.getUserId()) {
+                    if (Objects.equals(chat.getSenderId(), userMe.getUserId())) {
                         return chat.getChatStatus() != ChatStatus.MEDELETED;
                     } else {
                         return chat.getChatStatus() != ChatStatus.OPDELETED;

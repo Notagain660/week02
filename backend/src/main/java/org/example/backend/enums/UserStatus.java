@@ -8,14 +8,14 @@ public enum UserStatus {
     ACTIVE(0),
     BLOCKED(1);
     @EnumValue
-    private final int value;
-    UserStatus(int value) {
+    private final Integer value;
+    UserStatus(Integer value) {
         this.value = value;
     }
 
-    public static UserStatus fromValue(int value) {
+    public static UserStatus fromValue(Integer value) {
         for (UserStatus status : UserStatus.values()) {
-            if (status.value == value) {
+            if (status.value.equals(value)) {
                 return status;
             }
         }

@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.enums.UserStatus;
+import org.example.backend.enums.PostStatus;
+import org.example.backend.enums.Type;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,12 +14,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class OtherInfo implements Serializable {
+public class PostDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String avatar;
-    private String nickname;
-    private UserStatus status;
-    private Integer postNum;
+    private Type type;
+    private PostStatus status;
+    private String itemName;
 }

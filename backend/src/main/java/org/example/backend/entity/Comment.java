@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.*;
+import org.example.backend.enums.CommentStatus;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class Comment implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long batchco;
 
-    private int floor;
+    private Integer floor;
 
     @TableField("commenterid")
     private Long commenterId;
@@ -33,6 +34,8 @@ public class Comment implements Serializable {
     private Long postId;
     @TableField("commenttext")
     private String commentText;
+    @TableField("commentstatus")
+    private CommentStatus commentStatus;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime replyTime;
 

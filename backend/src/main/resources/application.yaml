@@ -12,6 +12,11 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: qwen:0.5b
 
 springdoc:
   api-docs:

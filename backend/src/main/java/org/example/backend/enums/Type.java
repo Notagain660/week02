@@ -9,14 +9,14 @@ public enum Type {
     LOST(0),
     FIND(1);
     @EnumValue
-    private final int value;
-    Type(int value) {
+    private final Integer value;
+    Type(Integer value) {
         this.value = value;
     }
 
-    public static Type fromValue(int value) {
+    public static Type fromValue(Integer value) {
         for (Type type : Type.values()) {
-            if (type.value == value) {
+            if (type.value.equals(value)) {
                 return type;
             }
         }

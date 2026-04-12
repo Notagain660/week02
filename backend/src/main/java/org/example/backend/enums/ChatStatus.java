@@ -10,14 +10,14 @@ public enum ChatStatus {
     MEDELETED(2),
     OPDELETED(3);
     @EnumValue
-    private final int value;
-    ChatStatus(int value) {
+    private final Integer value;
+    ChatStatus(Integer value) {
         this.value = value;
     }
 
-    public static ChatStatus fromValue(int value) {
+    public static ChatStatus fromValue(Integer value) {
         for (ChatStatus chatStatus : ChatStatus.values()) {
-            if (chatStatus.value == value) {
+            if (chatStatus.value.equals(value)) {
                 return chatStatus;
             }
         }

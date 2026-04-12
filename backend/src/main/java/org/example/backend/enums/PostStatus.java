@@ -10,14 +10,14 @@ public enum PostStatus {
     DELETED(2),
     COMPLETED(3);
     @EnumValue
-    private final int value;
-    PostStatus(int value) {
+    private final Integer value;
+    PostStatus(Integer value) {
         this.value = value;
     }
 
-    public static PostStatus fromValue(int value) {
+    public static PostStatus fromValue(Integer value) {
         for (PostStatus postStatus : PostStatus.values()) {
-            if (postStatus.value == value) {
+            if (postStatus.value.equals(value)) {
                 return postStatus;
             }
         }

@@ -21,9 +21,9 @@ public class Relation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableField("myid")
-    private long myId;
+    private Long myId;
     @TableField("itsid")
-    private long itsId;
+    private Long itsId;
     @TableField("ourstatus")
     private OurStatus ourStatus;
     @TableField(fill = FieldFill.INSERT_UPDATE)//不用手动set时间

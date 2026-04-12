@@ -28,9 +28,9 @@ public enum StatusCode {
     COMMENTBLOCKED(3003, "评论已封禁"),
 
     DBERROR(5001, "数据库错误");
-    private final int code;
+    private final Integer code;
     private final String message;
-    StatusCode(int code, String message) {
+    StatusCode(Integer code, String message) {
         this.code = code;
         this.message = message;
     }
