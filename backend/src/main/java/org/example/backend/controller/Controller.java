@@ -253,7 +253,7 @@ public class Controller {
     @PostMapping("/comment/{postId}/{replyId}")
     public MapperResult<Object> postReply(@PathVariable Long postId
             , @PathVariable Long replyId, @RequestParam String text){
-        boolean result = commentService.sendComment(postId, replyId, text);
+        boolean result = commentService.sendComment(replyId, postId, text);
         if (result) {
             return MapperResult.success(StatusCode.OK, null);
         }  else {

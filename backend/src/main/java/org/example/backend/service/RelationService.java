@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -60,7 +61,7 @@ public class RelationService {
         if (user.getStatus() == UserStatus.BLOCKED || userMe.getStatus() == UserStatus.BLOCKED) {
             throw new BusiException(StatusCode.USERBLOCKED, "禁止添加对方为好友");
         }
-        if (userMe.getUserId() == user.getUserId()) {
+        if (Objects.equals(userMe.getUserId(), user.getUserId())) {
             throw new BusiException(StatusCode.NOSELFRELA);
         }
         //检查是否为好友或者已申请过
@@ -115,7 +116,7 @@ public class RelationService {
         } else {//有操作的情况
             if (relation.getOurStatus().getValue() == 1) {
                 //REQUESTING状态，用户是被请求方时可以同意/拒绝
-                if(relation.getItsId() != userMe.getUserId()){//如果不是被请求方
+                if(!Objects.equals(relation.getItsId(), userMe.getUserId())){//如果不是被请求方
                     throw new BusiException(StatusCode.INVALID);
                 } else {
                     if(act == 1){//同意
@@ -126,8 +127,8 @@ public class RelationService {
                     }
                 }
             } else if(relation.getOurStatus().getValue() == 2 &&
-                     (relation.getItsId() == userMe.getUserId() ||
-                      relation.getMyId() == userMe.getUserId())){//删除好友，用户是关系一方
+                     (Objects.equals(relation.getItsId(), userMe.getUserId()) ||
+                             Objects.equals(relation.getMyId(), userMe.getUserId()))){//删除好友，用户是关系一方
                 relation.setOurStatus(OurStatus.NOKNIT);
                 relation.setOkTime(null);
             } else {

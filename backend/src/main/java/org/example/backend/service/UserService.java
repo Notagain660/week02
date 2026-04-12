@@ -44,6 +44,7 @@ public class UserService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();//bcrypt校验
         String encodedPassword = encoder.encode(user.getPassword());//encode方法
         user.setPassword(encodedPassword);//存加密后的密码
+        user.setUserName(user.getUserPhone());
 
         return userMapper.insert(user) == 1;
         //大于1可能校验是不是出现了漏洞因为单个用户注册不能一次插入多行数据

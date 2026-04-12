@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Transactional(rollbackFor = Exception.class)
@@ -60,7 +62,7 @@ public class SecurityService {
             LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(User::getUserPhone, DTO.getStr());
             User exist = userMapper.selectOne(wrapper);
-            if(exist != null && exist.getUserId() != user.getUserId()) {
+            if(exist != null && !Objects.equals(exist.getUserId(), user.getUserId())) {
                 throw new BusiException(StatusCode.USEREXIST, "手机号已被占用");
             }
             user.setUserPhone(DTO.getStr());

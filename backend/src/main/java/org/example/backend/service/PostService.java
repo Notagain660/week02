@@ -70,6 +70,7 @@ public class PostService {
         String AIDescription = aiService.generateDescription(post.getItemName(), post.getItemPlace()
                 , post.getUserDescription(), post.getItemTime());
         post.setAiDescription(AIDescription);
+        post.setPosterId(userMe.getUserId());
         post.setPostStatus(PostStatus.UNFINISHED);
         LocalDateTime itemTime = post.getItemTime();
         itemTime = itemTime.withSecond(0).withNano(0);

@@ -36,7 +36,7 @@ public class Comment implements Serializable {
     private String commentText;
     @TableField("commentstatus")
     private CommentStatus commentStatus;
-    @TableField(fill = FieldFill.INSERT)
+    @TableField("replytime")
     private LocalDateTime replyTime;
 
 }

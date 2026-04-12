@@ -35,7 +35,7 @@ public class Post implements Serializable {
     private String itemName;
     @TableField("itemplace")
     private String itemPlace;
-    @TableField(fill =  FieldFill.DEFAULT)
+    @TableField("itemtime")
     private LocalDateTime itemTime;//find则找到的时间（前端提示），lost则丢失的时间
     @TableField("userdes")
     private String userDescription;
