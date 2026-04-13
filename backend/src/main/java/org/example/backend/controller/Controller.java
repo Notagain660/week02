@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     private final CommentService commentService;
     private final ReportService reportService;
+    private final AdminService adminService;
 
 
     @GetMapping//直接输入网址就能测试是否通了
@@ -300,5 +302,56 @@ public class Controller {
         } else {
             return MapperResult.error(StatusCode.INVALID);
         }
+    }
+
+    @PutMapping("/user/check/{userId}")
+    public MapperResult<User> checkUser(@PathVariable Long userId){
+        User user = adminService.adminCheck(userId);
+        return MapperResult.success(StatusCode.OK, user);
+    }
+
+    @PutMapping("/admin/pin/{postId}")
+    public MapperResult<Object> pin(@PathVariable Long postId){
+        boolean result = adminService.pinOrNot(postId);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
+    @PutMapping("/admin/delete/{type}/{id}")
+    public MapperResult<Object> deleteAdmin(@PathVariable Integer type, @PathVariable Long id){
+        boolean result = adminService.delete(id, type);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
+    @PostMapping("/admin/statistcs/active")
+    public MapperResult<Integer> activeAdmin(@RequestParam LocalDate start, @RequestParam LocalDate end){
+        return MapperResult.success(StatusCode.OK, adminService.selectActive(start, end));
+    }
+
+    @GetMapping("/admin/statistics/post")
+    public MapperResult<Integer> totalPosts(){
+        return MapperResult.success(StatusCode.OK, adminService.selectPost());
+    }
+
+    @GetMapping("/admin/statistics/found")
+    public MapperResult<Integer> totalFound(){
+        return MapperResult.success(StatusCode.OK, adminService.selectFound());
+    }
+
+    @GetMapping("/admin/statistics/item")
+    public MapperResult<String> item(){
+        return MapperResult.success(StatusCode.OK, adminService.statistics());
+    }
+
+    @GetMapping("/admin/statistics/place")
+    public MapperResult<String> place(){
+        return MapperResult.success(StatusCode.OK, adminService.statistics());
     }
 }

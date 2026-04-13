@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.backend.mapper.StatisticsMapper">
+    <select id = "selectActive" resultType = "java.lang.Long">
+        SELECT commenterid AS userid FROM comment WHERE replytime BETWEEN #{start} AND #{end}
+        UNION
+        SELECT posterid AS userid FROM post WHERE posttime BETWEEN #{start} AND #{end}
+    </select>
+
+    <select id = "selectPosts" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM post WHERE poststatus = 0 OR poststatus = 1 OR poststatus = 3
+    </select>
+    
+    <select id = "selectFound" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM post WHERE type = 0 AND poststatus = 3
+    </select>
+    
+    <select id="selectItems" resultType="java.util.HashMap">
+        SELECT itemname, COUNT(*) AS count
+        FROM post
+        WHERE type = 0
+        GROUP BY itemname
+        ORDER BY count DESC
+    </select>
+
+    <select id="selectPlaces" resultType="java.util.HashMap">
+        SELECT itemplace, COUNT(*) AS count
+        FROM post
+        WHERE type = 0
+        GROUP BY itemplace
+        ORDER BY count DESC
+    </select>
+</mapper>
