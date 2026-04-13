@@ -67,14 +67,9 @@ public class CommentService {
             if (!postId.equals(opPostId)) {//不在一个帖子下
                 throw new BusiException(StatusCode.INVALID, "回复的评论不属于该帖子");
             }
-        } else {//回复帖主的
-            LambdaQueryWrapper<Post> postWrapper = new LambdaQueryWrapper<>();
-            postWrapper.eq(Post::getPosterId, replyId);
-
-            Post post = postMapper.selectOne(postWrapper);
-            if (post == null){
-                throw new BusiException(StatusCode.NOPOST);
-            }
+        } else {//回复帖主的，因为前面校验过帖子存不存在所以可以直接校验这个用户是不是发过帖子
+            Long count = postMapper.selectCount(new LambdaQueryWrapper<Post>().eq(Post::getPosterId, replyId));
+            if (count == 0) throw new BusiException(StatusCode.NOPOST);
         }
 
         Integer maxFloor = commentMapper.selectMaxFloorForUpdate(postId);//楼层分帖子按条增加

@@ -21,4 +21,5 @@ public class PostDTO implements Serializable {
     private Type type;
     private PostStatus status;
     private String itemName;
+    private String itemPlace;
 }

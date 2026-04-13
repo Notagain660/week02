@@ -232,8 +232,9 @@ public class Controller {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Integer type,
             @RequestParam(required = false) Integer status,//可选筛选和模糊搜索
-            @RequestParam(required = false) String itemName) {
-        IPage<PostDTO> pageResult = postService.browsePost(pageCode, size, type, status, itemName);
+            @RequestParam(required = false) String itemName,
+            @RequestParam(required = false) String itemPlace) {
+        IPage<PostDTO> pageResult = postService.browsePost(pageCode, size, type, status, itemName, itemPlace);
         return MapperResult.success(StatusCode.OK, pageResult);
     }
 
@@ -320,6 +321,16 @@ public class Controller {
         }
     }
 
+    @PutMapping("/admin/relasepin/{postId}")
+    public MapperResult<Object> releasePin(@PathVariable Long postId){
+        boolean result = adminService.releasePin(postId);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
     @PutMapping("/admin/delete/{type}/{id}")
     public MapperResult<Object> deleteAdmin(@PathVariable Integer type, @PathVariable Long id){
         boolean result = adminService.delete(id, type);
@@ -330,7 +341,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/admin/statistcs/active")
+    @PostMapping("/admin/statistics/active")
     public MapperResult<Integer> activeAdmin(@RequestParam LocalDate start, @RequestParam LocalDate end){
         return MapperResult.success(StatusCode.OK, adminService.selectActive(start, end));
     }
@@ -352,6 +363,6 @@ public class Controller {
 
     @GetMapping("/admin/statistics/place")
     public MapperResult<String> place(){
-        return MapperResult.success(StatusCode.OK, adminService.statistics());
+        return MapperResult.success(StatusCode.OK, adminService.statisticsPost());
     }
 }

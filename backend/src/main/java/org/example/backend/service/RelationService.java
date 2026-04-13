@@ -85,6 +85,7 @@ public class RelationService {
         relation = new Relation();
         relation.setItsId(userId);
         relation.setMyId(userMe.getUserId());
+        relation.setRequestTime(LocalDateTime.now());
         relation.setOurStatus(OurStatus.REQUESTING);
         return relationMapper.insert(relation) == 1;
     }

@@ -70,7 +70,7 @@ public class UserService {
             map.put("issue_time", DateUtil.now());
             map.put("expire_time", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
             map.put("userId",  String.valueOf(user.getUserId()));
-            map.put("user_email", user.getUserEmail());
+            map.put("useremail", user.getUserEmail());
             map.put("userphone", user.getUserPhone());
             map.put("role", user.getRole());
 

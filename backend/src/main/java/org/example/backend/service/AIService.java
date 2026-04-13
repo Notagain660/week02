@@ -69,4 +69,31 @@ public class AIService {
                 .getText();
     }
 
+    public String generateStatisticsPlace(List<Map<String, Object>> items) {
+        String clue = JSONUtil.toJsonStr(items);
+        String prompt = String.format("""
+                你是一个专业的词义近似和统计助手，以下是校园失物招领平台中丢失物品的地点的原始统计
+                （物品名称: 丢失次数）：%s
+                
+                请完成以下任务：
+                         1. 将语义相近的物品名称合并为一个通用类别（例如“伞”和“雨伞”合并为“雨伞”）。
+                         2. 合并后，按丢失次数从高到低排序，输出丢失次数最多的前10个物品类别，
+                            格式为 JSON 对象，键为合并后的物品类别，值为总次数。
+                         3. 在 JSON 对象之外，用一句简短的话总结丢失物品最多的地点的类别和可能原因。
+                         4. 返回格式必须为 JSON，结构如下：
+                         {
+                           "items": [
+                             {"name": "西三饭堂", "count": 20},
+                             {"name": "教学三号楼", "count": 20},
+                             ...
+                           ],
+                           "summary": "西三饭堂和教学三号楼是丢失物品最多的地方，可能因为西三食堂和教学三号楼人员流动大导致。"
+                         }
+                """, clue);
+        ChatResponse response = chatModel.call(new Prompt(prompt));
+        return response.getResult()
+                .getOutput()
+                .getText();
+    }
+
 }

@@ -37,8 +37,8 @@ public class JwtHelper {
 
         String userId = (String) jwt.getPayload("userId");
         String role = (String) jwt.getPayload("role");
-        String phone = (String) jwt.getPayload("phone");
-        String email = (String) jwt.getPayload("email");
+        String phone = (String) jwt.getPayload("userphone");
+        String email = (String) jwt.getPayload("useremail");
 
         ThreadContext.UserInfo userInfo = new ThreadContext.UserInfo(userId, role, phone, email);
         userInfo.setUserId(userId);

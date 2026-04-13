@@ -11,5 +11,6 @@ public interface PostMapper extends BaseMapper<Post> {
                                       @Param("userMeId") Long userMeId,
                                       @Param("type") Integer type,
                                       @Param("status") Integer status,
-                                      @Param("itemName") String itemName);
+                                      @Param("itemName") String itemName,
+                                      @Param("itemPlace") String itemPlace);
 }

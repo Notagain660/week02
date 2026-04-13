@@ -83,7 +83,7 @@ public class SecurityService {
             throw new BusiException(StatusCode.INVALID, "邮箱验证失败");
         }
         if (DTO.getStr() != null && !DTO.getStr().isEmpty()) {
-            user.setUserEmail(encoder.encode(DTO.getStr()));
+            user.setUserEmail(DTO.getStr());
         }
         return userMapper.updateById(user) == 1;
     }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-public interface StatisticsMapper extends BaseMapper<Object> {
+public interface StatisticsMapper extends BaseMapper<Void> {
     List<Long> selectActive (@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
     Integer selectPosts();
     Integer selectFound();

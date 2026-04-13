@@ -7,13 +7,13 @@
         WHERE p.poststatus != 2
         AND (
         p.visible = 0
-        OR (p.visible = 1 AND p.poster_id = #{currentUserId})<!--仅自己可见的情况-->
+        OR (p.visible = 1 AND p.posterid = #{currentUserId})<!--仅自己可见的情况-->
         OR (p.visible = 2 AND EXISTS (
         SELECT 1 FROM relation r<!--好友可见的情况，但是自己也可见-->
         WHERE r.ourstatus = 2
         AND (
-        (r.myid = p.poster_id AND r.itsid = #{currentUserId})
-        OR (r.myid = #{currentUserId} AND r.itsid = p.poster_id)
+        (r.myid = p.posterid AND r.itsid = #{currentUserId})
+        OR (r.myid = #{currentUserId} AND r.itsid = p.posterid)
         )
         ))
         )
@@ -25,6 +25,9 @@
         </if>
         <if test="itemName != null and itemName != ''"><!--字符串类型-->
             AND p.itemname LIKE CONCAT('%', #{itemName}, '%')
+        </if>
+        <if test="itemPlace != null and itemPlace != ''">
+            AND p.itemplace LIKE CONCAT('%', #{itemPlace}, '%')
         </if>
         ORDER BY p.posttime DESC
     </select>

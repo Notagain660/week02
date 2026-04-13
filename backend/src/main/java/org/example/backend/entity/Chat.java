@@ -29,7 +29,7 @@ public class Chat implements Serializable {
     private String chatContent;
     @TableField("chatstatus")
     private ChatStatus chatStatus;
-    @TableField(fill = FieldFill.INSERT)
+    @TableField("sendtime")
     private LocalDateTime sendTime;
     @TableField("readtime")
     private LocalDateTime readTime;
