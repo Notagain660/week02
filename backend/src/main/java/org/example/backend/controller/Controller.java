@@ -39,6 +39,7 @@ public class Controller {
     private final ChatModel chatModel;
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     private final CommentService commentService;
+    private final ReportService reportService;
 
 
     @GetMapping//直接输入网址就能测试是否通了
@@ -271,5 +272,33 @@ public class Controller {
         }
     }
 
+    @PostMapping("/report")
+    public MapperResult<Object> report(@RequestBody Report report){
+        boolean result = reportService.report(report);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
 
+    @PutMapping("/report/deal/{reportId}")
+    public MapperResult<Object> dealReport(@PathVariable Long reportId, @RequestParam Integer status){
+        boolean result = reportService.dealReport(reportId, status);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
+    @PutMapping("/report/{type}/{contentid}")
+    public MapperResult<Object> block(@PathVariable Integer type, @PathVariable Long contentid){
+        boolean result = reportService.block(type, contentid);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
 }

@@ -2,25 +2,23 @@ package org.example.backend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
-import org.example.backend.controller.Controller;
 import org.example.backend.entity.Comment;
 import org.example.backend.entity.Post;
 import org.example.backend.entity.User;
 import org.example.backend.enums.CommentStatus;
+import org.example.backend.enums.PostStatus;
 import org.example.backend.enums.StatusCode;
+import org.example.backend.enums.UserStatus;
 import org.example.backend.mapper.CommentMapper;
 import org.example.backend.mapper.PostMapper;
 import org.example.backend.mapper.UserMapper;
 import org.example.backend.tokener.ThreadContext;
 import org.example.backend.utilities.BusiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -30,16 +28,27 @@ public class CommentService {
     private final CommentMapper commentMapper;
     private final UserMapper userMapper;
     private final PostMapper postMapper;
-    private static final Logger log = LoggerFactory.getLogger(CommentService.class);
 
     public boolean sendComment(Long replyId, Long postId, String text){
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
-        //用户校验
+        User user = userMapper.selectById(replyId);
+        //用户和帖子校验
         if (userMe == null){
             throw new BusiException(StatusCode.USERNOEXIST);
         }
         if(replyId == null || replyId == 0){
             throw new BusiException(StatusCode.USERNOEXIST);
+        }
+        if(userMe.getStatus().equals(UserStatus.BLOCKED) || user.getStatus().equals(UserStatus.BLOCKED)){
+            throw new BusiException(StatusCode.USERBLOCKED);
+        }
+
+        Post Ipost = postMapper.selectById(postId);//仅校验用
+        if (Ipost == null){
+            throw new BusiException(StatusCode.NOPOST);
+        }
+        if(Ipost.getPostStatus().equals(PostStatus.BLOCKED)){
+            throw new BusiException(StatusCode.POSTBLOCKED);
         }
         //校验被回复用户是不是在评论区发言过或者是帖主
         LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
@@ -47,6 +56,10 @@ public class CommentService {
         //查有没有发过评论
         Comment replyComment = commentMapper.selectOne(wrapper);
         if (replyComment != null){//发过，就回复别人的评论
+            if(replyComment.getCommentStatus().equals(CommentStatus.BLOCKED)){
+                throw new BusiException(StatusCode.COMMENTBLOCKED);
+            }//评论被锁禁止回复
+
             Long opPostId = replyComment.getPostId();//评论是不是同一个帖子下
             if(postId == null || opPostId == null) {//防黑客的
                 throw new BusiException(StatusCode.NOPOST);
