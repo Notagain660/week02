@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.entity.Comment;
 import org.example.backend.entity.Post;
@@ -11,12 +12,15 @@ import org.example.backend.mapper.StatisticsMapper;
 import org.example.backend.mapper.UserMapper;
 import org.example.backend.tokener.ThreadContext;
 import org.example.backend.utilities.BusiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +34,9 @@ public class AdminService {
     private final CommentMapper commentMapper;
     private final StatisticsMapper statis;
     private final AIService aiService;
+
+    private static final Logger log = LoggerFactory.getLogger(AdminService.class);
+
 
     public User adminCheck(Long id) {
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
@@ -117,20 +124,44 @@ public class AdminService {
         return statis.selectFound();
     }
 
-    public String statistics(){
+    public Map<String, String> statistics(){
         List<Map<String, Object>> items = statis.selectItems();
-        String AIOutput = aiService.generateStatistics(items);
-        int start = AIOutput.indexOf("{");
-        int end = AIOutput.indexOf("}") + 1;
-        return AIOutput.substring(start, end);
+        String clue = JSONUtil.toJsonStr(items);
+        String AISummary;
+        try {
+            AISummary = aiService.generateStatistics(items);
+            if (AISummary == null || AISummary.trim().isEmpty()) {
+                AISummary = "AI 未返回有效总结。";
+            }
+        } catch (Exception e) {
+            log.error("AI 调用失败", e);
+            AISummary = "AI 服务暂时不可用。";
+        }
+
+        Map<String, String> result = new HashMap<>();
+        result.put("OriginData", clue);
+        result.put("AISummary", AISummary);
+        return result;
     }
 
-    public String statisticsPost(){
+    public Map<String, String> statisticsPost(){
         List<Map<String, Object>> items = statis.selectPlaces();
-        String AIOutput = aiService.generateStatisticsPlace(items);
-        int start = AIOutput.indexOf("{");
-        int end = AIOutput.indexOf("}") + 1;
-        return AIOutput.substring(start, end);
+        String clue = JSONUtil.toJsonStr(items);
+        String AISummary;
+        try {
+            AISummary = aiService.generateStatistics(items);
+            if (AISummary == null || AISummary.trim().isEmpty()) {
+                AISummary = "AI 未返回有效总结。";
+            }
+        } catch (Exception e) {
+            log.error("AI 调用失败", e);
+            AISummary = "AI 服务暂时不可用。";
+        }
+
+        Map<String, String> result = new HashMap<>();
+        result.put("OriginData", clue);
+        result.put("AISummary", AISummary);
+        return result;
     }
 
 }

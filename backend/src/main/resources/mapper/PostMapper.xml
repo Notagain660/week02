@@ -7,13 +7,13 @@
         WHERE p.poststatus != 2
         AND (
         p.visible = 0
-        OR (p.visible = 1 AND p.posterid = #{currentUserId})<!--仅自己可见的情况-->
+        OR (p.visible = 1 AND p.posterid = #{userMeId})<!--仅自己可见的情况-->
         OR (p.visible = 2 AND EXISTS (
         SELECT 1 FROM relation r<!--好友可见的情况，但是自己也可见-->
         WHERE r.ourstatus = 2
         AND (
-        (r.myid = p.posterid AND r.itsid = #{currentUserId})
-        OR (r.myid = #{currentUserId} AND r.itsid = p.posterid)
+        (r.myid = p.posterid AND r.itsid = #{userMeId})
+        OR (r.myid = #{userMeId} AND r.itsid = p.posterid)
         )
         ))
         )

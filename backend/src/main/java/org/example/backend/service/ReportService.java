@@ -37,7 +37,7 @@ public class ReportService {
 
     public boolean dealReport(Long reportId, Integer status) {
         Report report = reportMapper.selectById(reportId);
-        User userMe = userMapper.selectById(report.getReportee());
+        User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
         if(userMe == null)
             throw new BusiException(StatusCode.USERNOEXIST);
         if(!userMe.getRole().equals(Role.ADMIN))

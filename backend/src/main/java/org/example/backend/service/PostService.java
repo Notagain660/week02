@@ -72,10 +72,16 @@ public class PostService {
         post.setAiDescription(AIDescription);
         post.setPosterId(userMe.getUserId());
         post.setPostStatus(PostStatus.UNFINISHED);
+        post.setPinOrNot(false);
+
         LocalDateTime itemTime = post.getItemTime();
         itemTime = itemTime.withSecond(0).withNano(0);
         post.setItemTime(itemTime);
-        return postMapper.insert(post) == 1;
+        if (postMapper.insert(post) == 1) {
+            userMapper.updatePostNum(post.getPosterId(), 1);
+            return true;
+        }
+        return false;
     }
 
     public IPage<PostDTO> browsePost(int pageCode, int pageSize,
@@ -103,14 +109,36 @@ public class PostService {
             throw new BusiException(StatusCode.INVALID);
         }
 
-        if(!post.getPostStatus().equals(PostStatus.UNFINISHED)){
+        Post posttest = postMapper.selectById(post.getPostId());
+        if(!posttest.getPostStatus().equals(PostStatus.UNFINISHED)){
             throw new BusiException(StatusCode.INVALID);
         }
+
+        Post post2 = postMapper.selectById(post.getPostId());
+        post.setType(post2.getType());//类型不能改
         String AIDescription = aiService.generateDescription(post.getItemName(), post.getItemPlace()
                 , post.getUserDescription(), post.getItemTime());
         post.setAiDescription(AIDescription);
         post.setPostTime(LocalDateTime.now());
         return postMapper.updateById(post) == 1;
+    }
+
+    public boolean deletePost(Long postId){
+        User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        if (userMe == null) {
+            throw new BusiException(StatusCode.USERNOEXIST);
+        }
+
+        Post post = postMapper.selectById(postId);
+        if(!Objects.equals(userMe.getUserId(), post.getPosterId())){
+            throw new BusiException(StatusCode.INVALID);
+        }
+        post.setPostStatus(PostStatus.DELETED);
+        if(postMapper.updateById(post) == 1){
+            userMapper.updatePostNum(post.getPosterId(), -1);
+            return true;
+        }
+        return false;
     }
 
     public Post checkPost(Long postId) {

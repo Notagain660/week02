@@ -77,6 +77,7 @@ public class ChatService {
         }
 
         chat.setChatStatus(ChatStatus.READ);
+        chat.setReadTime(LocalDateTime.now());
         return chatMapper.updateById(chat) == 1;
     }
 

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -132,13 +133,13 @@ public class Controller {
         }
     }
 
-    @GetMapping("/user/{userId}")
+    @PutMapping("/user/{userId}")
     public MapperResult<OtherInfo> getOtherProfile(@PathVariable Long userId){
         OtherInfo oth = relationService.getOtherProfile(userId);
         return MapperResult.success(StatusCode.OK, oth);
     }
 
-    @GetMapping("/relation/{ourStatus}")
+    @PutMapping("/relation/{ourStatus}")
     public MapperResult<List<Relation>> getUserProfile(@PathVariable int ourStatus){
         if(ourStatus != 1 && ourStatus != 2){
             return MapperResult.error(StatusCode.INVALID);
@@ -184,7 +185,7 @@ public class Controller {
         }
     }
 
-    @GetMapping("/chat/check")
+    @PutMapping("/chat/check")
     public MapperResult<List<Chat>> checkChat(@RequestParam Long userId){
         List<Chat> chats = chatService.checkChats(userId);
         return MapperResult.success(StatusCode.OK, chats);
@@ -226,7 +227,7 @@ public class Controller {
         }
     }
 
-    @GetMapping("/post")
+    @PostMapping("/post")
     public MapperResult<IPage<PostDTO>> listPosts(
             @RequestParam(defaultValue = "1") int pageCode,
             @RequestParam(defaultValue = "10") int size,
@@ -248,10 +249,20 @@ public class Controller {
         }
     }
 
-    @GetMapping("/post/{postId}")
+    @PutMapping("/post/{postId}")
     public MapperResult<Post> checkPost(@PathVariable Long postId){
         Post post = postService.checkPost(postId);
         return MapperResult.success(StatusCode.OK, post);
+    }
+
+    @PutMapping("/post/delete/{postId}")
+    public MapperResult<Object> deletePost(@PathVariable Long postId){
+        boolean result = postService.deletePost(postId);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
     }
 
     @PostMapping("/comment/{postId}/{replyId}")
@@ -342,7 +353,8 @@ public class Controller {
     }
 
     @PostMapping("/admin/statistics/active")
-    public MapperResult<Integer> activeAdmin(@RequestParam LocalDate start, @RequestParam LocalDate end){
+    public MapperResult<Integer> activeAdmin(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
+                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
         return MapperResult.success(StatusCode.OK, adminService.selectActive(start, end));
     }
 
@@ -357,12 +369,12 @@ public class Controller {
     }
 
     @GetMapping("/admin/statistics/item")
-    public MapperResult<String> item(){
+    public MapperResult<Map<String, String>> item(){
         return MapperResult.success(StatusCode.OK, adminService.statistics());
     }
 
     @GetMapping("/admin/statistics/place")
-    public MapperResult<String> place(){
+    public MapperResult<Map<String, String>> place(){
         return MapperResult.success(StatusCode.OK, adminService.statisticsPost());
     }
 }

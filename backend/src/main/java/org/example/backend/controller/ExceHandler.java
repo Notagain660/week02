@@ -10,8 +10,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 
 @RestControllerAdvice//处理controller抛出的异常，返回为json，Spring启动时会自动扫描并注册这个 Bean
@@ -19,8 +21,16 @@ import java.io.IOException;
 public class ExceHandler {
     @ExceptionHandler(BusiException.class)
     public MapperResult<Void> handleBusiException(BusiException e) {
-        log.warn(e.getMessage());
+        log.warn("busi error",e);
         return MapperResult.error(e.getStatusCode(), null);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public MapperResult<Void> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        if (e.getRequiredType() == LocalDate.class) {
+            return MapperResult.error(StatusCode.INVALID, "日期格式错误，请使用 yyyy-MM-dd 格式");
+        }
+        return MapperResult.error(StatusCode.INVALID, "参数类型错误");
     }
 
     @ExceptionHandler(NoResourceException.class)
