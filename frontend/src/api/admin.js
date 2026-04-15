@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
 export const getActiveUsers = (start, end) =>
-    request.post('/admin/statistics/active', null, { params: { start, end } });
+    request.get('/admin/statistics/active',  { params: { start, end } });
 export const getTotalPosts = () => request.get('/admin/statistics/post');
 export const getTotalFound = () => request.get('/admin/statistics/found');
 export const getItemStatistics = () => request.get('/admin/statistics/item');

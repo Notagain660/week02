@@ -1,7 +1,7 @@
 <template>
   <div class="chat-room">
     <div class="header">
-      <el-button text @click="$router.back()">返回</el-button>
+      <el-button text @click="router.back()">返回</el-button>
       <span>与 {{ otherName }} 聊天中</span>
     </div>
     <div class="messages" ref="msgContainer">
@@ -30,65 +30,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { getChatsWithUser, sendChat, markChatRead } from '@/api/chat';
-import { getOtherProfile } from '@/api/user';
-import { useUserStore } from '@/stores/user';
-import dayjs from 'dayjs';
+import { ref, onMounted, nextTick, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { getChatsWithUser, sendChat, markChatRead } from '@/api/chat'
+import { getOtherProfile } from '@/api/user'
+import { useUserStore } from '@/stores/user'
+import dayjs from 'dayjs'
 
-const route = useRoute();
-const userStore = useUserStore();
-const myId = userStore.userInfo?.userId;
-const otherId = Number(route.params.userId);
-const messages = ref([]);
-const input = ref('');
-const otherName = ref('');
-const msgContainer = ref(null);
-let timer = null;
+const route = useRoute()
+const router = useRouter()          // ✅ 显式引入 router
+const userStore = useUserStore()
+const myId = userStore.userInfo?.userId
+const otherId = Number(route.params.userId)
+const messages = ref([])
+const input = ref('')
+const otherName = ref('')
+const msgContainer = ref(null)
+let timer = null
 
 const fetchMessages = async () => {
-  const res = await getChatsWithUser(otherId);
+  if (!myId) return                    // ✅ 防止 myId 为 undefined
+  const res = await getChatsWithUser(otherId)
   if (res.code === 200) {
-    messages.value = res.data;
-    // 滚动到底部
-    await nextTick();
+    messages.value = res.data
+    await nextTick()
     if (msgContainer.value) {
-      msgContainer.value.scrollTop = msgContainer.value.scrollHeight;
+      msgContainer.value.scrollTop = msgContainer.value.scrollHeight
     }
     // 标记对方发来的未读消息为已读
     for (const msg of messages.value) {
       if (msg.receiverId === myId && msg.chatStatus === 0) {
-        await markChatRead(msg.batchchat);
+        await markChatRead(msg.batchchat)
       }
     }
   }
-};
+}
 
 const send = async () => {
-  if (!input.value.trim()) return;
-  await sendChat(otherId, input.value);
-  input.value = '';
-  fetchMessages();
-};
+  if (!input.value.trim()) return
+  await sendChat(otherId, input.value)
+  input.value = ''
+  await fetchMessages()
+}
 
-const formatTime = (t) => dayjs(t).format('HH:mm');
+const formatTime = (t) => dayjs(t).format('HH:mm')
 
-// 轮询新消息（简单实现，生产环境可用 WebSocket）
 const startPolling = () => {
-  timer = setInterval(fetchMessages, 3000);
-};
+  timer = setInterval(fetchMessages, 3000)
+}
 
 onMounted(async () => {
-  const res = await getOtherProfile(otherId);
-  if (res.code === 200) otherName.value = res.data.nickname;
-  await fetchMessages();
-  startPolling();
-});
+  const res = await getOtherProfile(otherId)
+  if (res.code === 200) otherName.value = res.data.nickname
+  await fetchMessages()
+  startPolling()
+})
 
 onUnmounted(() => {
-  if (timer) clearInterval(timer);
-});
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <style scoped>

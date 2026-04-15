@@ -1,10 +1,10 @@
 package org.example.backend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.example.backend.entity.Comment;
-import org.example.backend.entity.Post;
-import org.example.backend.entity.User;
+import org.example.backend.entity.*;
 import org.example.backend.enums.CommentStatus;
 import org.example.backend.enums.PostStatus;
 import org.example.backend.enums.StatusCode;
@@ -36,7 +36,7 @@ public class CommentService {
         if (userMe == null){
             throw new BusiException(StatusCode.USERNOEXIST);
         }
-        if(replyId == null || replyId == 0){
+        if(replyId == null){
             throw new BusiException(StatusCode.USERNOEXIST);
         }
         if(userMe.getStatus().equals(UserStatus.BLOCKED) || user.getStatus().equals(UserStatus.BLOCKED)){
@@ -98,6 +98,18 @@ public class CommentService {
         comment.setCommentStatus(CommentStatus.DELETED);
         commentMapper.updateById(comment);
         return true;
+    }
+
+    public IPage<CommentVO> browsComment(Long postId, int pageCode, int pageSize){
+        Page<Comment> page = new Page<>(pageCode, pageSize);
+        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Comment::getPostId, postId)
+                .eq(Comment::getCommentStatus, CommentStatus.ACTIVE)
+                .orderByAsc(Comment::getFloor);
+        IPage<Comment> commentResult = commentMapper.selectPage(page, wrapper);
+        return commentResult.convert(comment ->
+                new CommentVO(comment.getFloor(), comment.getCommenterId(), comment.getCommentText(),comment.getPostId(),
+                        comment.getReplyId()));
     }
 
 

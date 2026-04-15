@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.enums.PostStatus;
-import org.example.backend.enums.Type;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,14 +12,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PostDTO implements Serializable {
+public class CommentVO  implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private Integer floor;
+    private Long commenterId;
+    private String commentText;
     private Long postId;
-    private Type type;
-    private Long posterId;
-    private PostStatus status;
-    private String itemName;
-    private String itemPlace;
+    private Long replyId;
 }

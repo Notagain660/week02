@@ -133,13 +133,13 @@ public class Controller {
         }
     }
 
-    @PutMapping("/user/{userId}")
+    @GetMapping("/user/{userId}")
     public MapperResult<OtherInfo> getOtherProfile(@PathVariable Long userId){
         OtherInfo oth = relationService.getOtherProfile(userId);
         return MapperResult.success(StatusCode.OK, oth);
     }
 
-    @PutMapping("/relation/{ourStatus}")
+    @GetMapping("/relation/{ourStatus}")
     public MapperResult<List<Relation>> getUserProfile(@PathVariable int ourStatus){
         if(ourStatus != 1 && ourStatus != 2){
             return MapperResult.error(StatusCode.INVALID);
@@ -164,7 +164,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/relation/{userId}/{ourStatus}/{act}")
+    @PutMapping("/relation/{userId}/{ourStatus}/{act}")
     public MapperResult<Object> agree(@PathVariable Long userId, @PathVariable int ourStatus, @PathVariable int act){
         boolean result = relationService.dealRelation(userId, OurStatus.fromValue(ourStatus)
                         , act);
@@ -185,7 +185,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/chat/check")
+    @GetMapping("/chat/check")
     public MapperResult<List<Chat>> checkChat(@RequestParam Long userId){
         List<Chat> chats = chatService.checkChats(userId);
         return MapperResult.success(StatusCode.OK, chats);
@@ -227,7 +227,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/post")
+    @GetMapping("/post")
     public MapperResult<IPage<PostDTO>> listPosts(
             @RequestParam(defaultValue = "1") int pageCode,
             @RequestParam(defaultValue = "10") int size,
@@ -239,7 +239,7 @@ public class Controller {
         return MapperResult.success(StatusCode.OK, pageResult);
     }
 
-    @PostMapping("/post/update")
+    @PutMapping("/post/update")
     public MapperResult<Post>  updatePost(@RequestBody Post post){
         boolean result = postService.updatePost(post);
         if (result) {//既然这样那用户删除功能也可以调用这个就是前端只能展示一个选项。
@@ -249,7 +249,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/post/{postId}")
+    @GetMapping("/post/{postId}")
     public MapperResult<Post> checkPost(@PathVariable Long postId){
         Post post = postService.checkPost(postId);
         return MapperResult.success(StatusCode.OK, post);
@@ -286,6 +286,14 @@ public class Controller {
         }
     }
 
+    @GetMapping("/comment/list/{postId}")
+    public MapperResult<IPage<CommentVO>> getComments(
+            @PathVariable Long postId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        IPage<CommentVO> pageResult = commentService.browsComment(postId, page, size);
+        return MapperResult.success(StatusCode.OK, pageResult);}
+
     @PostMapping("/report")
     public MapperResult<Object> report(@RequestBody Report report){
         boolean result = reportService.report(report);
@@ -316,7 +324,7 @@ public class Controller {
         }
     }
 
-    @PutMapping("/user/check/{userId}")
+    @GetMapping("/user/check/{userId}")
     public MapperResult<User> checkUser(@PathVariable Long userId){
         User user = adminService.adminCheck(userId);
         return MapperResult.success(StatusCode.OK, user);
@@ -352,7 +360,7 @@ public class Controller {
         }
     }
 
-    @PostMapping("/admin/statistics/active")
+    @GetMapping("/admin/statistics/active")
     public MapperResult<Integer> activeAdmin(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate start,
                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
         return MapperResult.success(StatusCode.OK, adminService.selectActive(start, end));

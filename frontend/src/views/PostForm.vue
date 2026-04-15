@@ -15,7 +15,7 @@
         <el-input v-model="form.itemPlace" />
       </el-form-item>
       <el-form-item label="时间">
-        <el-date-picker v-model="form.itemTime" type="datetime" placeholder="选择时间" />
+        <el-date-picker v-model="form.itemTime" type="datetime" placeholder="选择时间" value-format="YYYY-MM-DD HH:mm:ss" />
       </el-form-item>
       <el-form-item label="描述">
         <el-input v-model="form.userDescription" type="textarea" rows="3" />
@@ -28,7 +28,7 @@
         <el-upload action="#" :http-request="uploadImage" :show-file-list="false">
           <el-button>上传图片</el-button>
         </el-upload>
-        <img v-if="form.itemPhoto" :src="form.itemPhoto" style="width: 100px; margin-top: 10px;" />
+        <img v-if="form.itemPhoto" :src="form.itemPhoto" style="width: 100px; margin-top: 10px;" alt=""/>
       </el-form-item>
       <el-form-item label="联系方式">
         <el-input v-model="form.contact" />
@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createPost, updatePost, getPostDetail, uploadPostImage } from '@/api/post'
@@ -63,6 +63,7 @@ import { createPost, updatePost, getPostDetail, uploadPostImage } from '@/api/po
 const route = useRoute()
 const router = useRouter()
 const isEdit = !!route.params.postId
+
 const form = reactive({
   type: 0,
   itemName: '',
@@ -76,9 +77,9 @@ const form = reactive({
   postStatus: 0,
 })
 
+// 提示：AI描述将在后端自动生成，无需前端调用接口
 const generateAiDesc = () => {
-  // 调用后端 AI 生成接口（实际应在后端自动生成，这里可手动触发）
-  ElMessage.info('请填写完整信息后发布，AI会自动生成描述')
+  ElMessage.info('发布后系统会自动生成AI描述')
 }
 
 const uploadImage = async (options) => {
@@ -90,33 +91,60 @@ const uploadImage = async (options) => {
 }
 
 const submit = async () => {
-  // 简单校验
+  // 校验必填项
   if (!form.itemName || !form.itemPlace || !form.itemTime) {
     ElMessage.error('请填写完整信息')
     return
   }
+
+  // 复制表单数据
   const postData = { ...form }
-  if (isEdit) {
-    postData.postId = Number(route.params.postId)
-    const res = await updatePost(postData)
-    if (res.code === 200) {
-      ElMessage.success('更新成功')
-      router.push(`/post/${postData.postId}`)
+
+  // 时间格式转换（如果后端要求特定格式，这里已经通过日期选择器的 value-format 处理了）
+  // 如果日期选择器没有设置 value-format，则需要手动转换
+  if (postData.itemTime && typeof postData.itemTime === 'object') {
+    const d = postData.itemTime
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    const hours = String(d.getHours()).padStart(2, '0')
+    const minutes = String(d.getMinutes()).padStart(2, '0')
+    const seconds = String(d.getSeconds()).padStart(2, '0')
+    postData.itemTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  }
+
+  try {
+    if (isEdit) {
+      postData.postId = Number(route.params.postId)
+      const res = await updatePost(postData)
+      if (res.code === 200) {
+        ElMessage.success('更新成功')
+        await router.push(`/post/${postData.postId}`)
+      }
+    } else {
+      const res = await createPost(postData)
+      if (res.code === 200) {
+        ElMessage.success('发布成功')
+        await router.push('/')
+      }
     }
-  } else {
-    const res = await createPost(postData)
-    if (res.code === 200) {
-      ElMessage.success('发布成功')
-      router.push('/')
-    }
+  } catch (error) {
+    console.error('提交失败', error)
+    ElMessage.error('操作失败，请稍后重试')
   }
 }
 
+// 编辑模式：加载现有帖子数据
 if (isEdit) {
   onMounted(async () => {
     const res = await getPostDetail(Number(route.params.postId))
     if (res.code === 200) {
       Object.assign(form, res.data)
+      // 如果后端返回的时间格式是 ISO 字符串，可能需要转换以适配日期选择器
+      if (form.itemTime && typeof form.itemTime === 'string') {
+        // 将 "2025-04-15T12:30:00" 转换为 Date 对象
+        form.itemTime = new Date(form.itemTime)
+      }
     }
   })
 }

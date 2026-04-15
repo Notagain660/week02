@@ -11,4 +11,5 @@ public interface CommentMapper  extends BaseMapper<Comment> {
     //悲观锁,事务隔离级别使用 REPEATABLE_READ（MySQL 默认），FOR UPDATE 会锁住相关行。
     //
     //如果评论表数据量很大，FOR UPDATE 可能会影响性能
+
 }

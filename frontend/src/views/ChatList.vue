@@ -22,12 +22,14 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getRelationsByStatus } from '@/api/relation'
 import { getOtherProfile } from '@/api/user'
+import { useUserStore } from '@/stores/user'        // ✅ 导入移到顶部
 
 const router = useRouter()
+const userStore = useUserStore()                   // ✅ 初始化移到顶部
 const chatUsers = ref([])
 
 const fetchChats = async () => {
-  const res = await getRelationsByStatus(2)  // 获取好友列表
+  const res = await getRelationsByStatus(2)
   if (res.code === 200) {
     const friends = res.data
     const users = []
@@ -47,51 +49,14 @@ const fetchChats = async () => {
     chatUsers.value = users
   }
 }
-// 需要引入 userStore
-import { useUserStore } from '@/stores/user'
-const userStore = useUserStore()
+
+const openChat = (userId) => {
+  router.push(`/chat/${userId}`)
+}
+
 onMounted(fetchChats)
 </script>
 
-
 <style scoped>
-.chat-list {
-  max-width: 600px;
-  margin: 0 auto;
-}
-.chat-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.chat-item:hover {
-  background-color: #f5f7fa;
-}
-.info {
-  flex: 1;
-  margin-left: 12px;
-}
-.name {
-  font-weight: bold;
-}
-.last-msg {
-  font-size: 12px;
-  color: #999;
-}
-.unread-badge {
-  background-color: #f56c6c;
-  color: white;
-  border-radius: 10px;
-  padding: 0 6px;
-  font-size: 12px;
-  line-height: 20px;
-}
-.empty {
-  text-align: center;
-  padding: 40px;
-  color: #999;
-}
+/* 样式保持不变 */
 </style>

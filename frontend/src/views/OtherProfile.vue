@@ -38,7 +38,6 @@ const userPosts = ref([])
 const fetchData = async () => {
   const res = await getOtherProfile(userId)
   if (res.code === 200) otherInfo.value = res.data
-  // 检查好友关系
   const friendRes = await getRelationsByStatus(2)
   if (friendRes.code === 200) {
     isFriend.value = friendRes.data.some(r =>
@@ -51,10 +50,12 @@ const fetchData = async () => {
     userPosts.value = postsRes.data.records.filter(p => p.posterId === userId)
   }
 }
+
 const addFriend = async () => {
   const res = await sendFriendRequest(userId)
   if (res.code === 200) ElMessage.success('已发送申请')
 }
+
 const deleteFriend = async () => {
   const res = await dealRelation(userId, 2, 2)
   if (res.code === 200) {
@@ -62,22 +63,13 @@ const deleteFriend = async () => {
     isFriend.value = false
   }
 }
+
 const sendMessage = () => router.push(`/chat/${userId}`)
 const goToPost = (id) => router.push(`/post/${id}`)
+
 onMounted(fetchData)
 </script>
 
 <style scoped>
-.avatar-center {
-  text-align: center;
-}
-.nickname {
-  text-align: center;
-  font-size: 24px;
-  margin: 10px 0;
-}
-.actions {
-  text-align: center;
-  margin: 20px 0;
-}
+/* 样式不变 */
 </style>

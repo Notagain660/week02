@@ -6,7 +6,7 @@
       <span class="floor">#{{ comment.floor }}</span>
       <span class="time">{{ formatTime(comment.replyTime) }}</span>
       <div class="actions">
-        <el-button text @click="$emit('reply', comment.batchco)">回复</el-button>
+        <el-button text @click="$emit('reply', comment.batchco, comment.commenterId)">回复</el-button>
         <el-button v-if="isOwner" text type="danger" @click="$emit('delete', comment.batchco)">删除</el-button>
         <el-button v-else text type="warning" @click="$emit('report', comment.batchco)">举报</el-button>
       </div>
@@ -19,12 +19,12 @@
 </template>
 
 <script setup>
+defineEmits(['reply', 'delete', 'report'])
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 
 const props = defineProps(['comment', 'getFloorByCommentId'])
-const emit = defineEmits(['reply', 'delete', 'report'])
 const userStore = useUserStore()
 const isOwner = computed(() => userStore.userInfo?.userId === props.comment.commenterId)
 const formatTime = (t) => dayjs(t).format('MM-DD HH:mm')

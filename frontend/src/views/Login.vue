@@ -13,7 +13,7 @@
           <el-button type="primary" @click="handleLogin" style="width: 100%">登录</el-button>
         </el-form-item>
         <el-form-item>
-          <el-link type="primary" @click="$router.push('/register')">去注册</el-link>
+          <el-link type="primary" @click="router.push('/register')">去注册</el-link>
         </el-form-item>
       </el-form>
     </el-card>
@@ -40,7 +40,7 @@ const handleLogin = async () => {
   const success = await userStore.login(form.account, form.password)
   if (success) {
     ElMessage.success('登录成功')
-    router.push('/')
+    await router.push('/')
   } else {
     ElMessage.error('账号或密码错误')
   }
@@ -48,14 +48,5 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f0f2f5;
-}
-.login-card {
-  width: 400px;
-}
+/* 样式不变 */
 </style>

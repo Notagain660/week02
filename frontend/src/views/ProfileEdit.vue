@@ -55,14 +55,14 @@ const uploadAvatar = async (options) => {
   const res = await updateAvatar(fd)
   if (res.code === 200) {
     ElMessage.success('头像更新成功')
-    userStore.fetchUserInfo()
+    await userStore.fetchUserInfo()
   }
 }
 const saveBasic = async () => {
   const res = await updateName(nickname.value)
   if (res.code === 200) {
     ElMessage.success('昵称已更新')
-    userStore.fetchUserInfo()
+    await userStore.fetchUserInfo()
   }
 }
 const changePassword = async () => {

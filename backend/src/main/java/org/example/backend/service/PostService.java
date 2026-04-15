@@ -92,9 +92,11 @@ public class PostService {
         //该方法内部会执行一条分页 SQL，根据currentUserId、type、status、itemName过滤帖子，并只返回当前用户可见的帖子。
         Page<Post> resultPage = postMapper.selectVisiblePosts(page, userMe.getUserId()
                 , type, status, itemName, itemPlace);
+
         //Page<T>的convert方法返回的是IPage<PostDTO>（接口），而不是Page<PostDTO>（实现类）,IPage和Page序列化后是一样的。
         return resultPage.convert(post ->
-                new PostDTO(post.getType(), post.getPostStatus(), post.getItemName(), post.getItemPlace()));
+                new PostDTO(post.getPostId(), post.getType(), post.getPosterId(), post.getPostStatus(),
+                        post.getItemName(), post.getItemPlace()));
     }
 
     public boolean updatePost(Post post) {

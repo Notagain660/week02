@@ -73,7 +73,7 @@ const handleRegister = async () => {
   const res = await register(data)
   if (res.code === 201) {
     ElMessage.success('注册成功')
-    router.push('/login')
+    await router.push('/login')
   } else {
     ElMessage.error(res.message || '注册失败')
   }

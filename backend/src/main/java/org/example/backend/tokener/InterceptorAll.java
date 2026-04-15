@@ -27,7 +27,8 @@ public class InterceptorAll implements WebMvcConfigurer {
                 .excludePathPatterns("/api/register", "/api/login", "/api",
                                      "/swagger-ui/**",                        // Swagger UI 资源
                                      "/v3/api-docs/**",                       // OpenAPI 文档
-                                     "/swagger-resources/**",                 // Swagger 资源
+                                     "/swagger-resources/**",// Swagger 资源
+                                     "/avatar/**",
                                      "/webjars/**");                            // Swagger 依赖的 webjars
     }
 

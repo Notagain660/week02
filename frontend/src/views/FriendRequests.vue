@@ -32,14 +32,14 @@ const accept = async (userId) => {
   const res = await dealRelation(userId, 1, 1)
   if (res.code === 200) {
     ElMessage.success('已同意')
-    fetchRequests()
+    await fetchRequests()
   }
 }
 const reject = async (userId) => {
   const res = await dealRelation(userId, 1, 0)
   if (res.code === 200) {
     ElMessage.success('已拒绝')
-    fetchRequests()
+    await fetchRequests()
   }
 }
 onMounted(fetchRequests)

@@ -48,6 +48,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { getPostList } from '@/api/post'
 import PostCard from '@/components/PostCard.vue'
 
@@ -66,29 +67,45 @@ const filters = ref({
 
 const fetchPosts = async () => {
   loading.value = true
-  const res = await getPostList({
-    pageCode: page.value,
-    size: size.value,
-    type: filters.value.type,
-    status: filters.value.status,
-    itemName: filters.value.itemName,
-    itemPlace: filters.value.itemPlace,
-  })
-  if (res.code === 200) {
-    posts.value = res.data.records
-    total.value = res.data.total
+  try {
+    const res = await getPostList({
+      pageCode: page.value,
+      size: size.value,
+      type: filters.value.type,
+      status: filters.value.status,
+      itemName: filters.value.itemName,
+      itemPlace: filters.value.itemPlace,
+    })
+    if (res.code === 200) {
+      posts.value = res.data.records
+      total.value = res.data.total
+      // 调试：打印第一条数据的字段
+      if (posts.value.length) console.log('帖子数据示例:', posts.value[0])
+    }
+  } catch (error) {
+    ElMessage.error('加载失败')
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
+
 const search = () => {
   page.value = 1
   fetchPosts()
 }
+
 const resetFilters = () => {
   filters.value = { type: undefined, status: undefined, itemName: '', itemPlace: '' }
   search()
 }
-const goToDetail = (id) => router.push(`/post/${id}`)
+
+const goToDetail = (id) => {
+  if (!id) {
+    ElMessage.error('帖子ID无效')
+    return
+  }
+  router.push(`/post/${id}`)
+}
 
 onMounted(fetchPosts)
 </script>

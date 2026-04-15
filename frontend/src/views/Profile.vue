@@ -19,7 +19,7 @@
           <el-descriptions-item label="邮箱">{{ userInfo?.userEmail }}</el-descriptions-item>
           <el-descriptions-item label="密码">********</el-descriptions-item>
         </el-descriptions>
-        <el-button type="primary" @click="$router.push('/profile/edit')">编辑资料</el-button>
+        <el-button type="primary" @click="router.push('/profile/edit')">编辑资料</el-button>
       </div>
       <div v-else>
         <PostCard v-for="p in myPosts" :key="p.postId" :post="p" @click="goToPost(p.postId)" />
@@ -30,8 +30,8 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import {createRouter as $router, useRouter} from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getPostList } from '@/api/post'
 import PostCard from '@/components/PostCard.vue'

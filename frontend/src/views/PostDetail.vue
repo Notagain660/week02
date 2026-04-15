@@ -19,7 +19,7 @@
         <p>时间：{{ formatTime(post.itemTime) }}</p>
         <p>描述：{{ post.userDescription }}</p>
         <p v-if="post.aiDescription">AI描述：{{ post.aiDescription }}</p>
-        <img v-if="post.itemPhoto" :src="post.itemPhoto" style="max-width: 100%;"  alt=""/>
+        <img v-if="post.itemPhoto" :src="post.itemPhoto" style="max-width: 100%;" alt=""/>
         <p>联系方式：{{ post.contact }}</p>
         <p>可见范围：{{ visibleText }}</p>
       </div>
@@ -28,14 +28,14 @@
     <el-card style="margin-top: 20px">
       <div class="comment-input">
         <el-input v-model="newComment" placeholder="发表评论" />
-        <el-button type="primary" @click="addComment(0)">评论</el-button>
+        <el-button type="primary" @click="submitComment">评论</el-button>
       </div>
       <CommentItem
           v-for="c in comments"
           :key="c.batchco"
           :comment="c"
           :get-floor-by-comment-id="getFloorByCommentId"
-          @reply="replyToComment"
+          @reply="startReply"
           @delete="deleteComment"
           @report="reportComment"
       />
@@ -48,7 +48,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getPostDetail, deletePost as apiDeletePost } from '@/api/post'
-import { addComment as apiAddComment, deleteComment as apiDeleteComment } from '@/api/comment'
+import { addComment as apiAddComment, deleteComment as apiDeleteComment, getCommentList } from '@/api/comment'
+import { addReport } from '@/api/report'
 import { useUserStore } from '@/stores/user'
 import CommentItem from '@/components/CommentItem.vue'
 import dayjs from 'dayjs'
@@ -56,11 +57,12 @@ import dayjs from 'dayjs'
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
-const postId = Number(route.params.postId)
+const postId = computed(() => Number(route.params.postId))
 const post = ref({})
 const comments = ref([])
 const loading = ref(false)
 const newComment = ref('')
+const currentReplyId = ref(null)
 
 const isOwner = computed(() => userStore.userInfo?.userId === post.value.posterId)
 const visibleText = computed(() => {
@@ -73,52 +75,64 @@ const visibleText = computed(() => {
 })
 
 const fetchDetail = async () => {
-  loading.value = true
-  const res = await getPostDetail(postId)
-  if (res.code === 200) {
-    post.value = res.data
-    // 模拟评论数据，实际应从后端获取
-    comments.value = []
+  if (isNaN(postId.value)) {
+    ElMessage.error('无效的帖子ID')
+    return
   }
-  loading.value = false
+  loading.value = true
+  try {
+    const res = await getPostDetail(postId.value)
+    if (res.code === 200) {
+      post.value = res.data
+      const commentRes = await getCommentList(postId.value, 1, 20)
+      if (commentRes.code === 200) comments.value = commentRes.data.records
+    }
+  } catch (error) {
+    ElMessage.error('加载失败')
+  } finally {
+    loading.value = false
+  }
 }
 
-const addComment = async (replyId) => {
+const startReply = (commentId, commenterId) => {
+  currentReplyId.value = commenterId
+  newComment.value = `@${commentId} `
+}
+
+const submitComment = async () => {
+  const replyId = currentReplyId.value !== null ? currentReplyId.value : post.value.posterId
   if (!newComment.value.trim()) return
-  const res = await apiAddComment(postId, replyId, newComment.value)
+  const res = await apiAddComment(postId.value, replyId, newComment.value)
   if (res.code === 200) {
     ElMessage.success('评论成功')
     newComment.value = ''
-    fetchDetail()
+    currentReplyId.value = null
+    await fetchDetail()
   }
-}
-
-const replyToComment = (commentId) => {
-  newComment.value = `@${commentId} `
 }
 
 const deleteComment = async (id) => {
   await ElMessageBox.confirm('确认删除？')
   const res = await apiDeleteComment(id)
   if (res.code === 200) ElMessage.success('删除成功')
-  fetchDetail()
+  await fetchDetail()
 }
 
 const reportComment = (id) => {
   router.push({ path: '/report', query: { type: 2, contentId: id } })
 }
 
-const reportPost = () => router.push({ path: '/report', query: { type: 1, contentId: postId } })
-const editPost = () => router.push(`/post/edit/${postId}`)
+const reportPost = () => router.push({ path: '/report', query: { type: 1, contentId: postId.value } })
+const editPost = () => router.push(`/post/edit/${postId.value}`)
 const deletePost = async () => {
   await ElMessageBox.confirm('确认删除帖子？')
-  const res = await apiDeletePost(postId)
+  const res = await apiDeletePost(postId.value)
   if (res.code === 200) {
     ElMessage.success('删除成功')
-    router.push('/')
+    await router.push('/')
   }
 }
-const formatTime = (t) => dayjs(t).format('YYYY-MM-DD HH:mm')
+const formatTime = (t) => t ? dayjs(t).format('YYYY-MM-DD HH:mm') : ''
 const getFloorByCommentId = (id) => {
   const comment = comments.value.find(c => c.batchco === id)
   return comment ? comment.floor : '?'
@@ -126,26 +140,3 @@ const getFloorByCommentId = (id) => {
 
 onMounted(fetchDetail)
 </script>
-
-<style scoped>
-.post-detail {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-.post-header {
-  display: flex;
-  align-items: center;
-}
-.info {
-  flex: 1;
-  margin-left: 16px;
-}
-.actions {
-  margin-left: auto;
-}
-.comment-input {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-</style>
