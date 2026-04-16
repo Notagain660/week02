@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {checkme, login, register, updateAvatar} from "@/api/user.js";
+import {checkme, login, register, updateAvatar, updateName} from "@/api/user.js";
 
 export const useStore = defineStore('main', {
     state: () => ({
@@ -41,6 +41,14 @@ export const useStore = defineStore('main', {
             const res = await updateAvatar(file)
             if (res.code === 200) {
                 await this.fetchUserInfo()
+                return true
+            }
+            return false
+        },
+        async updateName(newName) {
+            const res = await updateName(newName)
+            if (res.code === 200) {
+                await this.fetchUserInfo()  // 刷新用户信息
                 return true
             }
             return false

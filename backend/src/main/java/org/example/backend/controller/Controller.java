@@ -89,7 +89,7 @@ public class Controller {
         } else {
             return MapperResult.error(StatusCode.INVALID);
         }
-    }
+    }//记得回车和刷新
 
     @PutMapping("/user/change/avatar")
     public MapperResult<Object> changeAvatar(@RequestPart ("image") MultipartFile image) {

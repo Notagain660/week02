@@ -9,3 +9,4 @@ export const updateAvatar = (file) => {
     return api.put('/user/change/avatar', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     })}
+export const updateName = (name) => api.put('/user/change/name', null, { params: { name } })
