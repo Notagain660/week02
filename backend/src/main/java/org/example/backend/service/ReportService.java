@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Transactional(rollbackFor = Exception.class)
@@ -24,6 +26,15 @@ public class ReportService {
     private final ReportMapper reportMapper;
     private final PostMapper postMapper;
     private final CommentMapper commentMapper;
+
+    public List<Report> getReports() {
+        User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        if(userMe == null)
+            throw new BusiException(StatusCode.USERNOEXIST);
+        if(!userMe.getRole().equals(Role.ADMIN))
+            throw new BusiException(StatusCode.INVALID);
+        return reportMapper.selectList(null);
+    }
 
     public boolean report(Report report) {
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());

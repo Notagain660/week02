@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -50,24 +51,23 @@ public class CommentService {
         if(Ipost.getPostStatus().equals(PostStatus.BLOCKED)){
             throw new BusiException(StatusCode.POSTBLOCKED);
         }
+
         //校验被回复用户是不是在评论区发言过或者是帖主
         LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Comment::getCommenterId, replyId);
         //查有没有发过评论
-        Comment replyComment = commentMapper.selectOne(wrapper);
-        if (replyComment != null){//发过，就回复别人的评论
-            if(replyComment.getCommentStatus().equals(CommentStatus.BLOCKED)){
-                throw new BusiException(StatusCode.COMMENTBLOCKED);
-            }//评论被锁禁止回复
-
-            Long opPostId = replyComment.getPostId();//评论是不是同一个帖子下
-            if(postId == null || opPostId == null) {//防黑客的
-                throw new BusiException(StatusCode.NOPOST);
+        int i = 0 ;
+        List<Comment> replyComments = commentMapper.selectList(wrapper);
+        for(Comment comment : replyComments){
+            if(comment.getPostId().equals(postId)){//发过，就回复别人的评论
+                if(comment.getCommentStatus().equals(CommentStatus.BLOCKED)){
+                    throw new BusiException(StatusCode.COMMENTBLOCKED);
+                }
+               i++;
             }
-            if (!postId.equals(opPostId)) {//不在一个帖子下
-                throw new BusiException(StatusCode.INVALID, "回复的评论不属于该帖子");
-            }
-        } else {//回复帖主的，因为前面校验过帖子存不存在所以可以直接校验这个用户是不是发过帖子
+        }
+        if (i == 0){
+            //回复帖主的，因为前面校验过帖子存不存在所以可以直接校验这个用户是不是发过帖子
             Long count = postMapper.selectCount(new LambdaQueryWrapper<Post>().eq(Post::getPosterId, replyId));
             if (count == 0) throw new BusiException(StatusCode.NOPOST);
         }

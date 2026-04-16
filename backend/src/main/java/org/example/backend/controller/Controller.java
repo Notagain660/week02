@@ -314,6 +314,11 @@ public class Controller {
         }
     }
 
+    @GetMapping("/report/check")
+    public MapperResult<List<Report>> checkReport(){
+        return  MapperResult.success(StatusCode.OK, reportService.getReports());
+    }
+
     @PutMapping("/report/{type}/{contentid}")
     public MapperResult<Object> block(@PathVariable Integer type, @PathVariable Long contentid){
         boolean result = reportService.block(type, contentid);
