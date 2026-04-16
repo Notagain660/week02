@@ -1,6 +1,7 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 import { useStore } from '@/store'
+import AvatarUpdater from '@/components/AvatarUpdater.vue'
 
 const store = useStore()
 const currentUser = ref(null)
@@ -22,6 +23,7 @@ onMounted(async () => {
 <template>
   <div>
     <h1>查看我的信息</h1>
+    <AvatarUpdater />
     <div>
       <img :src="currentUser?.userAvatar" alt="头像" style="width: 100px; height: 100px;" />
     </div>

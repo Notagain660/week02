@@ -9,6 +9,9 @@ const routes = [
     },
     { path: '/register', name: 'Register', component: () => import('@/view/Register.vue') },
     { path: '/user/checkme', name: 'CheckMe', component: () => import('@/view/CheckMe.vue') }
+    
+
+
     // 后续可以添加其他路由，如登录、注册、首页等
 ]
 
