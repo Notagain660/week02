@@ -1,5 +1,8 @@
 <template>
   <div>
+    <button @click="goToMyProfile">我的主页</button>
+    <button @click="goToMyReport">举报管理</button>
+    <AdminStats />
     <h2>全部帖子</h2>
     <router-link to="/post/create">发布帖子</router-link>
     <!-- 筛选栏 -->
@@ -47,6 +50,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getPostList } from '@/api/user.js'
 import PinButton from "@/components/PinButton.vue";
+import AdminStats from "@/components/AdminStats.vue";
 
 const router = useRouter()
 const posts = ref([])
@@ -62,6 +66,14 @@ const filters = reactive({
 })
 
 const totalPages = computed(() => Math.ceil(total.value / size.value))
+
+const goToMyProfile = () => {
+  router.push('/user/checkme')
+}
+
+const goToMyReport = () => {
+  router.push('/report/check')
+}
 
 const fetchPosts = async () => {
   loading.value = true

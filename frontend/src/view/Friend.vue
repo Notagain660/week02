@@ -7,6 +7,7 @@
     <ul v-else>
       <li v-for="friend in friends" :key="friend.userId">
         {{ friend.userName }}
+        <ChatButton :user-id="friend.userId" />
         <button @click="deleteFriend(friend.userId)">删除好友</button>
       </li>
     </ul>
@@ -14,6 +15,8 @@
 </template>
 
 <script setup>
+import ChatButton from "@/components/ChatButton.vue";
+
 console.log('FriendsList 组件已挂载')
 import { ref, onMounted } from 'vue'
 import { getRelation, dealRelation, getOtherProfile } from '@/api/user'
