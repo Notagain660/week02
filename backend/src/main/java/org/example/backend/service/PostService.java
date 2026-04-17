@@ -84,7 +84,7 @@ public class PostService {
         return false;
     }
 
-    public IPage<PostDTO> browsePost(int pageCode, int pageSize,
+    public IPage<PostDTO> browsePost(int pageCode, int pageSize,Long userId,
                                      Integer type, Integer status, String itemName, String itemPlace){
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
         Page<Post> page = new Page<>(pageCode, pageSize);//创建MyBatis-Plus的分页对象，指定页码和每页大小

@@ -231,11 +231,12 @@ public class Controller {
     public MapperResult<IPage<PostDTO>> listPosts(
             @RequestParam(defaultValue = "1") int pageCode,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Integer type,
             @RequestParam(required = false) Integer status,//可选筛选和模糊搜索
             @RequestParam(required = false) String itemName,
             @RequestParam(required = false) String itemPlace) {
-        IPage<PostDTO> pageResult = postService.browsePost(pageCode, size, type, status, itemName, itemPlace);
+        IPage<PostDTO> pageResult = postService.browsePost(pageCode, size, userId, type, status, itemName, itemPlace);
         return MapperResult.success(StatusCode.OK, pageResult);
     }
 

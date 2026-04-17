@@ -4,6 +4,7 @@ import { useStore } from '@/store'
 import AvatarUpdater from '@/components/AvatarUpdater.vue'
 import NameUpdater from "@/components/NameUpdater.vue";
 import router from "@/router.js";
+import MyPosts from "@/components/MyPosts.vue";
 
 const store = useStore()
 const currentUser = ref(null)
@@ -46,5 +47,6 @@ onMounted(async () => {
     <div>发帖数：{{ currentUser?.userPostNum }}</div>
     <div>手机号：{{ currentUser?.userPhone }}</div>
     <div>邮箱：{{ currentUser?.userEmail }}</div>
+    <MyPosts />
   </div>
 </template>
