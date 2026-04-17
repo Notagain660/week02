@@ -109,8 +109,16 @@ public class CommentService {
         IPage<Comment> commentResult = commentMapper.selectPage(page, wrapper);
         return commentResult.convert(comment ->
                 new CommentVO(comment.getFloor(), comment.getCommenterId(), comment.getCommentText(),comment.getPostId(),
-                        comment.getReplyId(), comment.getBatchco()));
+                        comment.getReplyId(), comment.getBatchco(), comment.getReplyTime()));
     }
 
+    public List<Comment> getRepliedToMe() {
+        User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        Long currentUserId = userMe.getUserId();
+        LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Comment::getReplyId, currentUserId)
+                .orderByDesc(Comment::getReplyTime);
+        return commentMapper.selectList(wrapper);
+    }
 
 }

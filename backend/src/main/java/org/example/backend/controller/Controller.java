@@ -211,6 +211,12 @@ public class Controller {
         }
     }
 
+    @GetMapping("/chat/received-to-me")
+    public MapperResult<List<Chat>> getReceivedChats() {
+        List<Chat> chats = chatService.getReceivedChats();
+        return MapperResult.success(StatusCode.OK, chats);
+    }
+
     @PostMapping("/post/image")
     public MapperResult<String> postImage(@RequestPart (value = "image", required = false) MultipartFile image){
         String postImage = postService.getImage(image);
@@ -294,6 +300,12 @@ public class Controller {
             @RequestParam(defaultValue = "10") int size) {
         IPage<CommentVO> pageResult = commentService.browsComment(postId, page, size);
         return MapperResult.success(StatusCode.OK, pageResult);}
+
+    @GetMapping("/comment/replied-to-me")
+    public MapperResult<List<Comment>> getRepliedToMe() {
+        List<Comment> comments = commentService.getRepliedToMe();
+        return MapperResult.success(StatusCode.OK, comments);
+    }
 
     @PostMapping("/report")
     public MapperResult<Object> report(@RequestBody Report report){

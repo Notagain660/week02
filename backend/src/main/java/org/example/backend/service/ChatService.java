@@ -112,4 +112,13 @@ public class ChatService {
                 .sorted(Comparator.comparing(Chat::getSendTime))
                 .collect(Collectors.toList());
     }
+
+    public List<Chat> getReceivedChats() {
+        User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        Long currentUserId = userMe.getUserId();
+        LambdaQueryWrapper<Chat> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Chat::getReceiverId, currentUserId)
+                .orderByDesc(Chat::getSendTime);
+        return chatMapper.selectList(wrapper);
+    }
 }

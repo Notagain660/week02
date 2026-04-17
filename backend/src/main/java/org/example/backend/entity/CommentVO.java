@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -22,4 +23,5 @@ public class CommentVO  implements Serializable {
     private Long postId;
     private Long replyId;
     private Long batchco;
+    private LocalDateTime replyTime;
 }
