@@ -29,6 +29,7 @@
         <div>地点：{{ post.itemPlace }}</div>
         <div>状态：{{ getStatusText(post.status) }}</div>
         <button @click="goToDetail(post.postId)">查看详情</button>
+        <PinButton :post-id="post.postId" :pin-status="post.pinOrNot" />
       </li>
     </ul>
 
@@ -45,6 +46,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getPostList } from '@/api/user.js'
+import PinButton from "@/components/PinButton.vue";
 
 const router = useRouter()
 const posts = ref([])
