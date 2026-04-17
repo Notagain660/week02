@@ -11,7 +11,8 @@
         <div class="stat-value">{{ totalFound }}</div>
       </div>
     </div>
-
+    <ActiveUserStats />
+    <AdminDeleteButton/>
     <!-- 物品统计 -->
     <div class="stat-section">
       <h3>丢失物品统计（饼图）</h3>
@@ -32,6 +33,8 @@
 import { ref, onMounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { getTotalPosts, getTotalFound, getItemStatistics, getPlaceStatistics } from '@/api/user.js'
+import ActiveUserStats from "@/components/ActiveUserStats.vue";
+import AdminDeleteButton from "@/components/AdminDeleteButton.vue";
 
 const totalPosts = ref(0)
 const totalFound = ref(0)
