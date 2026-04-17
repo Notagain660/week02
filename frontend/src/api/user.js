@@ -53,3 +53,6 @@ export const adminDelete = (type, id) => api.put(`/admin/delete/${type}/${id}`)
 export const adminCheckUser = (userId) => api.get(`/user/check/${userId}`)
 export const pinPost = (postId) => api.put(`/admin/pin/${postId}`)
 export const releasePin = (postId) => api.put(`/admin/relasepin/${postId}`)
+
+export const getRepliedComments = () => api.get('/comment/replied-to-me')
+export const getReceivedChats = () => api.get('/chat/received-to-me')

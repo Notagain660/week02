@@ -3,6 +3,7 @@
     <button @click="goToMyProfile">我的主页</button>
     <button @click="goToMyReport">举报管理</button>
     <AdminStats />
+    <button @click="router.push('/notifications')">消息中心</button>
     <h2>全部帖子</h2>
     <router-link to="/post/create">发布帖子</router-link>
     <!-- 筛选栏 -->

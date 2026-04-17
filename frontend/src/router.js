@@ -80,6 +80,12 @@ const routes = [
         path: '/auth',
         name: 'Auth',
         component: () => import('@/view/AuthView.vue')
+    },
+    {
+        path: '/notifications',
+        name: 'NotificationCenter',
+        component: () => import('@/view/NotificationCenter.vue'),
+        meta: { requiresAuth: true }
     }
 
 
