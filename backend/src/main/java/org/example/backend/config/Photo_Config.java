@@ -10,5 +10,8 @@ public class Photo_Config implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/avatar/**")
                 .addResourceLocations("file:D:/uploads/avatar/");
+        registry.addResourceHandler("/post/**")
+                .addResourceLocations("file:D:/uploads/post/");
+
     }
 }

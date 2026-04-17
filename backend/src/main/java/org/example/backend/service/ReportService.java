@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.entity.Comment;
 import org.example.backend.entity.Post;
@@ -31,9 +32,14 @@ public class ReportService {
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
         if(userMe == null)
             throw new BusiException(StatusCode.USERNOEXIST);
-        if(!userMe.getRole().equals(Role.ADMIN))
-            throw new BusiException(StatusCode.INVALID);
-        return reportMapper.selectList(null);
+        if(userMe.getRole() == Role.ADMIN)
+        {
+            return reportMapper.selectList(null);
+        } else {
+            return reportMapper.selectList(new LambdaQueryWrapper<Report>().eq(Report::getReporter,
+                    userMe.getUserId()));
+        }
+
     }
 
     public boolean report(Report report) {

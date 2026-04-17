@@ -21,4 +21,5 @@ public class CommentVO  implements Serializable {
     private String commentText;
     private Long postId;
     private Long replyId;
+    private Long batchco;
 }

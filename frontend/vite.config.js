@@ -8,7 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {target: 'http://localhost:8080', changeOrigin: true },
-      '/avatar': { target: 'http://localhost:8080', changeOrigin: true }
+      '/avatar': { target: 'http://localhost:8080', changeOrigin: true },
+      '/post': { target: 'http://localhost:8080', changeOrigin: true }
     }
   },
   resolve: {

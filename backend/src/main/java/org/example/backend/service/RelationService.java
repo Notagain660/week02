@@ -77,8 +77,14 @@ public class RelationService {
             } else if (relation.getOurStatus().getValue() == 1) {
                 throw new BusiException(StatusCode.INVALID, "你已经发送好友申请");
             } else if (relation.getOurStatus().getValue() == 0) {
+                LambdaUpdateWrapper<Relation> combinedWrapper = new LambdaUpdateWrapper<>();
+                combinedWrapper.and(cw -> cw.eq(Relation::getMyId, userMe.getUserId())
+                                .eq(Relation::getItsId, userId))
+                        .or(cw -> cw.eq(Relation::getMyId, userId)
+                                .eq(Relation::getItsId, userMe.getUserId()));
+
                 relation.setOurStatus(OurStatus.REQUESTING);
-                return relationMapper.updateById(relation) == 1;
+                return relationMapper.update(relation, combinedWrapper) == 1;
             }
         }
 

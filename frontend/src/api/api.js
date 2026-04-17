@@ -13,7 +13,8 @@ api.interceptors.request.use(config => {
         config.headers.Authorization = `Bearer ${token}`
     }
     return config;
-});
+}, error => Promise.reject(error)
+);
 
 // 响应拦截器
 api.interceptors.response.use(
@@ -22,10 +23,8 @@ api.interceptors.response.use(
         if (res.code !== 200 && res.code !== 201) {
             ElMessage.error(res.message || '请求失败');
             if (res.code === 401) {
-                import('@/store').then(({ useStore }) => {
-                const store = useStore();
-                store.logout();
-                }).catch(() => {})
+                localStorage.removeItem('token')
+                window.location.href = '/login'
                 // 跳转登录页
             }
             return Promise.reject(new Error(res.message));

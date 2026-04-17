@@ -28,7 +28,7 @@ public class InterceptorAll implements WebMvcConfigurer {
                                      "/swagger-ui/**",                        // Swagger UI 资源
                                      "/v3/api-docs/**",                       // OpenAPI 文档
                                      "/swagger-resources/**",// Swagger 资源
-                                     "/avatar/**",
+                                     "/avatar/**", "/post/**",
                                      "/webjars/**");                            // Swagger 依赖的 webjars
     }
 

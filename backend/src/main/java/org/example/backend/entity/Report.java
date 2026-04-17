@@ -39,5 +39,6 @@ public class Report implements Serializable {
     private String reason;
     @TableField("status")
     private ReportStatus status;
+
 }
 

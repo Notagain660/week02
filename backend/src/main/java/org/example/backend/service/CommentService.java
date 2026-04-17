@@ -109,7 +109,7 @@ public class CommentService {
         IPage<Comment> commentResult = commentMapper.selectPage(page, wrapper);
         return commentResult.convert(comment ->
                 new CommentVO(comment.getFloor(), comment.getCommenterId(), comment.getCommentText(),comment.getPostId(),
-                        comment.getReplyId()));
+                        comment.getReplyId(), comment.getBatchco()));
     }
 
 
