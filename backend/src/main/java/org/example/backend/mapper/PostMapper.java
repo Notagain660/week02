@@ -9,6 +9,7 @@ public interface PostMapper extends BaseMapper<Post> {
 
         Page<Post> selectVisiblePosts(Page<Post> page,
                                       @Param("userMeId") Long userMeId,
+                                      @Param("posterId") Long posterId,
                                       @Param("type") Integer type,
                                       @Param("status") Integer status,
                                       @Param("itemName") String itemName,

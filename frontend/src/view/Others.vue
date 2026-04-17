@@ -9,6 +9,7 @@
       <div>状态：{{ user.status === 0 ? '正常' : '封禁' }}</div>
       <div>发帖数：{{ user.postNum }}</div>
       <OtherproAdd :userId="Number(userId)" />
+      <UserPosts :user-id="userId" />
     </div>
     <div v-else>用户不存在</div>
   </div>
@@ -19,6 +20,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getOtherProfile } from '@/api/user'
 import OtherproAdd from '@/components/OtherproAdd.vue'
+import UserPosts from "@/components/UserPosts.vue";
 
 const route = useRoute()
 const userId = route.params.userId

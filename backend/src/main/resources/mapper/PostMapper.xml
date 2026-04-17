@@ -17,6 +17,7 @@
         )
         ))
         )
+        <if test="posterId != null"> AND p.posterid = #{posterId}</if>
         <if test="type != null">
             AND p.type = #{type}
         </if>
@@ -29,7 +30,7 @@
         <if test="itemPlace != null and itemPlace != ''">
             AND p.itemplace LIKE CONCAT('%', #{itemPlace}, '%')
         </if>
-        ORDER BY p.posttime DESC
+        ORDER BY p.pinornot DESC, p.posttime DESC
     </select>
 
 </mapper>
