@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -112,13 +113,18 @@ public class CommentService {
                         comment.getReplyId(), comment.getBatchco(), comment.getReplyTime()));
     }
 
-    public List<Comment> getRepliedToMe() {
+    public List<CommentVO> getRepliedToMe() {
         User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
         Long currentUserId = userMe.getUserId();
         LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Comment::getReplyId, currentUserId)
-                .orderByDesc(Comment::getReplyTime);
-        return commentMapper.selectList(wrapper);
+                    .orderByDesc(Comment::getReplyTime);
+        List<Comment> comments = commentMapper.selectList(wrapper);
+            // 转换为 CommentVO
+        return comments.stream()
+                    .map(c -> new CommentVO(c.getFloor(), c.getCommenterId(), c.getCommentText(),
+                            c.getPostId(), c.getReplyId(),c.getBatchco(), c.getReplyTime()))
+                    .collect(Collectors.toList());
     }
 
 }

@@ -302,8 +302,8 @@ public class Controller {
         return MapperResult.success(StatusCode.OK, pageResult);}
 
     @GetMapping("/comment/replied-to-me")
-    public MapperResult<List<Comment>> getRepliedToMe() {
-        List<Comment> comments = commentService.getRepliedToMe();
+    public MapperResult<List<CommentVO>> getRepliedToMe() {
+        List<CommentVO> comments = commentService.getRepliedToMe();
         return MapperResult.success(StatusCode.OK, comments);
     }
 
