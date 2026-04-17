@@ -50,4 +50,4 @@ export const getItemStatistics = () => api.get('/admin/statistics/item')
 export const getPlaceStatistics = () => api.get('/admin/statistics/place')
 export const getActiveUsers = (start, end) => api.get('/admin/statistics/active', { params: { start, end } })
 export const adminDelete = (type, id) => api.put(`/admin/delete/${type}/${id}`)
-
+export const adminCheckUser = (userId) => api.get(`/user/check/${userId}`)

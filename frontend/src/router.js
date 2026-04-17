@@ -69,6 +69,12 @@ const routes = [
         name: 'AdminStats',
         component: () => import('@/view/AdminStats.vue'),
         meta: { requiresAuth: true, admin: true }  // 可选，用于权限控制
+    },
+    {
+        path: '/admin/user/:userId',
+        name: 'UserInfo',
+        component: () => import('@/components/AdminUserDetail.vue'),
+        meta: { requiresAuth: true, admin: true }
     }
 
 
