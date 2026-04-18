@@ -39,6 +39,13 @@
         </select>
       </div>
       <div>
+        <label>状态</label>
+        <select v-model="form.postStatus">
+          <option :value="0">未处理</option>
+          <option :value="3">已完成</option>
+        </select>
+      </div>
+      <div>
         <label>图片</label>
         <input type="file" @change="handleImageUpload" accept="image/*" />
         <img v-if="imagePreview" :src="imagePreview" style="width: 100px; margin-top: 5px;" alt=""/>
