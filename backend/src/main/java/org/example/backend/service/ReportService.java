@@ -99,5 +99,39 @@ public class ReportService {
         return false;
     }
 
+    public boolean deblock (Integer type, Long contentId){
+        User userMe = userMapper.selectById(ThreadContext.getCurrentUser().getUserId());
+        if(userMe == null)
+            throw new BusiException(StatusCode.USERNOEXIST);
+        if(!userMe.getRole().equals(Role.ADMIN))
+            throw new BusiException(StatusCode.INVALID);
 
+        ReportType reportType = ReportType.fromValue(type);
+        if(reportType == null)
+            throw new BusiException(StatusCode.INVALID);
+        switch (reportType) {
+            case USER -> {
+                User user = userMapper.selectById(contentId);
+                if(user == null)
+                    throw new BusiException(StatusCode.USERNOEXIST);
+                user.setStatus(UserStatus.ACTIVE);
+                return userMapper.updateById(user) == 1;
+            }
+            case POST -> {
+                Post post = postMapper.selectById(contentId);
+                if(post == null)
+                    throw new BusiException(StatusCode.NOPOST);
+                post.setPostStatus(PostStatus.UNFINISHED);
+                return postMapper.updateById(post) == 1;
+            }
+            case COMMENT -> {
+                Comment comment = commentMapper.selectById(contentId);
+                if(comment == null)
+                    throw new BusiException(StatusCode.NOCOMMENT);
+                comment.setCommentStatus(CommentStatus.ACTIVE);
+                return commentMapper.updateById(comment) == 1;
+            }
+        }
+        return false;
+    }
 }

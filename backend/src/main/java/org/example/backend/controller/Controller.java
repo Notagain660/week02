@@ -354,6 +354,16 @@ public class Controller {
         }
     }
 
+    @PutMapping("/report/de/{type}/{contentid}")
+    public MapperResult<Object> deblock(@PathVariable Integer type, @PathVariable Long contentid){
+        boolean result = reportService.deblock(type, contentid);
+        if (result) {
+            return MapperResult.success(StatusCode.OK, null);
+        } else {
+            return MapperResult.error(StatusCode.INVALID);
+        }
+    }
+
     @GetMapping("/user/check/{userId}")
     public MapperResult<User> checkUser(@PathVariable Long userId){
         User user = adminService.adminCheck(userId);

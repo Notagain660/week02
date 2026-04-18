@@ -43,6 +43,7 @@ export const getReportList = () => api.get('/report/check')
 export const addReport = (data) => api.post('/report', data)
 export const dealReport = (reportId, status) => api.put(`/report/deal/${reportId}`, null, { params: { status } })
 export const blockContent = (type, contentId) => api.put(`/report/${type}/${contentId}`)
+export const deblockContent = (type, contentId) => api.put(`/report/de/${type}/${contentId}`)
 
 export const getTotalPosts = () => api.get('/admin/statistics/post')
 export const getTotalFound = () => api.get('/admin/statistics/found')

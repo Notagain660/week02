@@ -1,6 +1,7 @@
 <template>
   <div>
     <BlockButton @success="fetchReports" />
+    <DeBlockButton @success="fetchReports" />
     <h2>举报列表</h2>
     <div v-if="loading">加载中...</div>
     <div v-else-if="reports.length === 0">暂无举报</div>
@@ -37,6 +38,7 @@ import { getReportList } from '@/api/user.js'
 import ReportForm from "@/components/ReportForm.vue";
 import DealReport from '@/components/DealReport.vue'
 import BlockButton from "@/components/BlockButton.vue";
+import DeBlockButton from "@/components/DeBlockButton.vue";
 
 const reports = ref([])
 const loading = ref(false)
