@@ -63,7 +63,7 @@ const fetchChats = async () => {
   try {
     const res = await getReceivedChats()
     if (res.code === 200) {
-      chats.value = res.data
+      chats.value = res.data.filter(item => item.chatStatus === 0)
     } else {
       ElMessage.error(res.message || '加载失败')
     }
