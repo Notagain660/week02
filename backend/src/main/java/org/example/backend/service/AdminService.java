@@ -1,6 +1,7 @@
 package org.example.backend.service;
 
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import org.example.backend.entity.Comment;
 import org.example.backend.entity.Post;
@@ -15,6 +16,7 @@ import org.example.backend.utilities.BusiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +64,9 @@ public class AdminService {
         if(post == null)
             throw new BusiException(StatusCode.NOPOST);
         post.setPinOrNot(true);
+
+        post.setTopExpireTime(LocalDateTime.now().plusHours(24));
+
         return postMapper.updateById(post) == 1;
     }
 
@@ -75,7 +80,20 @@ public class AdminService {
         if(post == null)
             throw new BusiException(StatusCode.NOPOST);
         post.setPinOrNot(false);
+
+        post.setTopExpireTime(null);
+
         return postMapper.updateById(post) == 1;
+    }
+
+    @Scheduled(cron = "0 0 1 * * ?") // 每天凌晨1点执行
+    public void clearExpiredTop() {
+        UpdateWrapper<Post> wrapper = new UpdateWrapper<>();
+        wrapper.set("pinornot", false)
+               .set("top_expire_time", null)
+               .eq("pinornot", true)
+               .lt("top_expire_time", LocalDateTime.now());
+        postMapper.update(null, wrapper);
     }
 
     public boolean delete(Long id, Integer type) {
@@ -149,7 +167,7 @@ public class AdminService {
         String clue = JSONUtil.toJsonStr(items);
         String AISummary;
         try {
-            AISummary = aiService.generateStatistics(items);
+            AISummary = aiService.generateStatisticsPlace(items);
             if (AISummary == null || AISummary.trim().isEmpty()) {
                 AISummary = "AI 未返回有效总结。";
             }

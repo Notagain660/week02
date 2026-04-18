@@ -56,3 +56,4 @@ export const releasePin = (postId) => api.put(`/admin/relasepin/${postId}`)
 
 export const getRepliedComments = () => api.get('/comment/replied-to-me')
 export const getReceivedChats = () => api.get('/chat/received-to-me')
+export const generateAiDescription = (data) => api.post('/ai/describe', data)

@@ -27,6 +27,9 @@ public enum StatusCode {
     NOCOMMENT(3002, "评论不存在"),
     COMMENTBLOCKED(3003, "评论已封禁"),
 
+    AI_TIMEOUT(4000, "AI 服务响应超时，请稍后重试"),
+    AI_ERROR(4001,"AI 服务暂时不可用"),
+
     DBERROR(5001, "数据库错误");
     private final Integer code;
     private final String message;

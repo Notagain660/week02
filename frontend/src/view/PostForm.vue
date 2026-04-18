@@ -25,6 +25,12 @@
         <label>描述</label>
         <textarea v-model="form.userDescription"></textarea>
       </div>
+      <AIDescriptionButton
+          :item-name="form.itemName"
+          :place="form.itemPlace"
+          :user-desc="form.userDescription"
+          @success="(desc) => form.aiDescription = desc"
+      />
       <div>
         <label>联系方式</label>
         <input v-model="form.contact" />
@@ -52,6 +58,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createPost, updatePost, getPostDetail, uploadPostImage } from '@/api/user.js'
+import AIDescriptionButton from "@/components/AIDescriptionButton.vue";
 
 const route = useRoute()
 const router = useRouter()

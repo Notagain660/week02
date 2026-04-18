@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class Controller {
     private final CommentService commentService;
     private final ReportService reportService;
     private final AdminService adminService;
+    private final AIService aiService;
 
 
     @GetMapping//直接输入网址就能测试是否通了
@@ -55,6 +57,16 @@ public class Controller {
     public String testAI() {
         return chatModel.call(new Prompt("用中文简单介绍一下人工智能"))
                 .getResult().getOutput().getText();
+    }
+
+    @PostMapping("/ai/describe")
+    public MapperResult<String> generateDescription(@RequestBody Map<String, String> request) {
+        String itemName = request.get("itemName");
+        String place = request.get("place");
+        String userDesc = request.get("userDesc");
+        // 调用 AIService 的生成方法
+        String aiDesc = aiService.generateDescription(itemName, place, userDesc, LocalDateTime.now());
+        return MapperResult.success(StatusCode.OK, aiDesc);
     }
 
     @PostMapping("/register")

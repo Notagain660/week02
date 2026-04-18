@@ -30,7 +30,8 @@
         <if test="itemPlace != null and itemPlace != ''">
             AND p.itemplace LIKE CONCAT('%', #{itemPlace}, '%')
         </if>
-        ORDER BY p.pinornot DESC, p.posttime DESC
+        ORDER BY (IF(p.pinornot = 1 AND (p.top_expire_time IS NULL OR p.top_expire_time > NOW()), 1, 0)) DESC,
+        p.posttime DESC
     </select>
 
 </mapper>

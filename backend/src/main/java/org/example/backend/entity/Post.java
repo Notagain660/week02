@@ -47,5 +47,7 @@ public class Post implements Serializable {
     private boolean pinOrNot;//前端不提供用户输入这个的界面，反正默认为false
     @TableField("posttime")
     private LocalDateTime postTime;
+    @TableField("top_expire_time")
+    private LocalDateTime topExpireTime;
 
 }

@@ -2,6 +2,8 @@ package org.example.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import cn.hutool.json.JSONUtil;
+import org.example.backend.enums.StatusCode;
+import org.example.backend.utilities.BusiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -25,6 +27,7 @@ public class AIService {
 
     public String generateDescription(String itemName, String place, String userDesc, LocalDateTime itemTime) {
         // 精心构造提示词，指导AI生成更准确的描述
+        try {
         String prompt = String.format("""
                 你是一个专业的失物招领助手。请根据以下信息，为物品生成一段生动、简洁的描述，以便失主能够快速识别。
                 物品名称：%s
@@ -43,6 +46,13 @@ public class AIService {
         return response.getResult()
                 .getOutput()
                 .getText();
+        } catch (Exception e) {
+            if (e.getMessage().contains("ReadTimeout") || e.getCause() instanceof java.net.SocketTimeoutException) {
+                // 超时异常，返回特定提示或抛出业务异常
+                throw new BusiException(StatusCode.AI_TIMEOUT);
+            }
+            throw new BusiException(StatusCode.AI_ERROR);
+        }
     }
 
     public String generateStatistics(List<Map<String, Object>> items) {
