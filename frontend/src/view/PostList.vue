@@ -6,6 +6,9 @@
     <button @click="router.push('/notifications')">消息中心</button>
     <h2>全部帖子</h2>
     <router-link to="/post/create">发布帖子</router-link>
+    <div class="admin-friend-tip">
+      ⚡ 进站同学请先添加管理员好友（ID：2 和 ID：3）⚡
+    </div>
     <!-- 筛选栏 -->
     <div>
       <select v-model="filters.type">
