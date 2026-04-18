@@ -5,10 +5,10 @@
     <div v-else-if="posts.length === 0">暂无帖子</div>
     <div v-else>
       <div v-for="post in posts" :key="post.postId" class="post-item">
-        <div><strong>{{ post.type === 0 ? '丢失' : '拾取' }}</strong> {{ post.itemName }}</div>
+        <div><strong>{{ post.type === 'LOST' ? '丢失' : '拾取' }}</strong> {{ post.itemName }}</div>
         <div>地点：{{ post.itemPlace }}</div>
         <div>时间：{{ formatTime(post.itemTime) }}</div>
-        <div>状态：{{ post.status === 0 ? '未处理' : '已完成' }}</div>
+        <div>状态：{{ post.status === 'UNFINISHED' ? '未处理' : '已完成' }}</div>
       </div>
       <div class="pagination">
         <button @click="prevPage" :disabled="page === 1">上一页</button>
