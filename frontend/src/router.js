@@ -5,7 +5,7 @@ const routes = [
     {
         path: '/login', name: 'Login', component: () => import('@/view/user.vue')   // 路径根据你实际文件位置调整
     },{
-        path: '/', name: 'Home', component: () => import('@/view/PostList.vue')   // 你的帖子列表组件
+        path: '/', name: 'Home', component: () => import('@/view/AuthView.vue')   // 你的帖子列表组件
     },
     { path: '/register', name: 'Register', component: () => import('@/view/Register.vue') },
     { path: '/user/checkme', name: 'CheckMe', component: () => import('@/view/CheckMe.vue') },

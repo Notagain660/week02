@@ -27,7 +27,7 @@ const doLogin = async () => {
   try {
     const success = await store.login(account.value, password.value)
     if (success) {
-       await router.push('/')
+       await router.push('/posts')
     } else {
       alert('登录失败')
     }
