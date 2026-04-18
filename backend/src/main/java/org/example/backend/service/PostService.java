@@ -51,7 +51,7 @@ public class PostService {
         try {
             image.transferTo(file);//上传的临时文件直接写入到指定的目标文件，目录不存在爆IOException
         } catch (IOException e) {
-            log.error("头像上传失败", e);
+            log.error("图片上传失败", e);
             throw new BusiException(StatusCode.DBERROR, "图片保存失败");
         }
 
